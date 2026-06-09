@@ -8,6 +8,7 @@ using InfraStructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using AutoMapper;
 namespace API
 {
     public class Program
@@ -21,7 +22,8 @@ namespace API
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             //builder.Services.AddOpenApi();
-            builder.Services.AddAutoMapper(typeof(CreateProductDTO).Assembly);
+            builder.Services.AddAutoMapper(cfg => { },
+                typeof(CreateProductDTO));
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServiceCollection();
             builder.Services.AddSwaggerGen();
