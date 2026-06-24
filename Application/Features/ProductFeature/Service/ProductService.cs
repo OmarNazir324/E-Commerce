@@ -1,50 +1,40 @@
-﻿using Application.Features.Product.DTOs;
+﻿using Application.CrudServiceGeneric;
+using Application.Features.Product.DTOs;
 using Application.Features.Product.Interfaces;
 using Application.Features.ProductFeature.DTOs;
 using AutoMapper;
+using Domain.Entities;
+using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 
 namespace Application.Features.ProductFeature.Service
 {
-    public class ProductService : IProductService
+    public class ProductService: MainServiceCrud<CreateProductDTO,UpdateProductDTO,Domain.Entities.Product> , IProductService
     {
-         private readonly IMainInterFace<Domain.Entities.Product> _repo;
-        private readonly IMapper mapper;
-        public ProductService(IMapper _mapper,IMainInterFace<Domain.Entities.Product> repo)
+        private readonly IMainInterFace<Domain.Entities.Product> _repo;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _uow;
+        public ProductService(IMapper mapper, IMainInterFace<Domain.Entities.Product> repo, IUnitOfWork uow)
+            :base(repo,mapper,uow)
         {
-            this.mapper = _mapper;
+            this._mapper = mapper;
             this._repo = repo;
+            this._uow = uow;
         }
 
         public async Task<IEnumerable<ProductDTO>> GetProducts()
         {
             var Products = await _repo.GetALL();
-            var result = mapper.Map<IEnumerable<ProductDTO>>(Products);
+            var result = _mapper.Map<IEnumerable<ProductDTO>>(Products);
             if (result == null) return null;
             return result;
         }
         public async Task<ProductDTO> GetProductById(int productId)
         {
             var product = await _repo.GetByID(productId);
-            var result = mapper.Map<ProductDTO>(product);
-            if (result == null) return null;
-            return result;
+            return _mapper.Map<ProductDTO>(product);
         }
-        public async Task Create(CreateProductDTO createProductDTO)
-        {
-            var originalProduct = mapper.Map<Domain.Entities.Product>(createProductDTO);
-            await _repo.Create(originalProduct);
-        }
-        public async Task Update(UpdateProductDTO updateProductDTO)
-        {
-            var originalProduct = mapper.Map<Domain.Entities.Product>(updateProductDTO);
-            await _repo.Update(originalProduct);
-        }
-        public async Task Delete(int id)
-        {
-            var rseult = await _repo.GetByID(id);
-            await _repo.Delete(rseult);
-        }
+        
 
     }
 }

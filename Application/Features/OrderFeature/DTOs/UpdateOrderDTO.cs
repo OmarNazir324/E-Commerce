@@ -1,4 +1,5 @@
 ﻿using Application.Features.CommonDTO;
+using Application.Features.Order_ItemsFeature.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,6 +15,7 @@ namespace Application.Features.OrderFeature.DTOs
         public bool IsRefunded { get; set; }
         
         public bool IsDeleted { get; set; }
+        public ICollection<UpdateOrder_ItemsDTO> Order_Items { get; set; }
 
     }
 }

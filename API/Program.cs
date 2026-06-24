@@ -35,7 +35,7 @@ namespace API
                 DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
                 {
                     sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);
-                    sqloptions.EnableRetryOnFailure(DatabaseOptions.RetryOnFailure);
+                   // sqloptions.EnableRetryOnFailure(DatabaseOptions.RetryOnFailure);
                 });
                 DbContextOptionsBuilder.EnableDetailedErrors(DatabaseOptions.EnableDetailedErrors);
                 DbContextOptionsBuilder.EnableSensitiveDataLogging(DatabaseOptions.EnableSenstiveDataLogging);

@@ -1,5 +1,7 @@
-﻿using InfraStructure.Persistence;
+﻿using Dapper;
+using InfraStructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +12,7 @@ namespace InfraStructure.Repositories.Generic
 
         private readonly AppdbContext _context;
         private readonly Microsoft.EntityFrameworkCore.DbSet<T> _dbSet;
-       
+
 
         public MainRepository(AppdbContext context)
         {
@@ -18,6 +20,7 @@ namespace InfraStructure.Repositories.Generic
             _dbSet = _context.Set<T>();
 
         }
+        public AppdbContext GetCurrentContext() => _context;
         public async Task<IEnumerable<T>> GetALL()
         {
             return await _dbSet.AsNoTracking().ToListAsync();
@@ -35,7 +38,7 @@ namespace InfraStructure.Repositories.Generic
                 }
             }
 
-            return await query.ToListAsync();
+            return await query.AsNoTracking().ToListAsync();
         }
         public async Task<(IEnumerable<T> Data, int TotalCount)> GetPagedAsync(
             int pageNumber,
@@ -71,7 +74,7 @@ namespace InfraStructure.Repositories.Generic
             }
 
             // Pagination
-            var data = await query
+            var data = await query.AsNoTracking()
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -94,32 +97,58 @@ namespace InfraStructure.Repositories.Generic
                     query = query.Include(include);
                 }
             }
-            return await query
+            return await query.AsNoTracking()
                 .Where(predicate)
                 .ToListAsync();
         }
-        public async Task<T> GetByID(int id)
+        public async Task<T?> GetByID(int id)
         {
             return await _dbSet.FindAsync(id);
         }
-        public virtual async Task Create(T t)
+        public async Task<IEnumerable<T>> GetSelectedFields<T>(string sql, IDbTransaction? transaction = null)
+            where T : class
         {
-            _dbSet.Add(t);
-            await _context.SaveChangesAsync();
+            using var connection = _context.Database.GetDbConnection();
+            if (connection.State == ConnectionState.Closed)
+            {
+                await connection.OpenAsync();
+            }
+
+            var result = await connection.QueryAsync<T>(sql, transaction: transaction);
+
+            return result.ToList();
         }
-        public virtual async Task Update(T t)
+        public async Task<IEnumerable<dynamic>> GetSelectedFields(
+            string sql,
+            IDbTransaction? transaction = null)
         {
-            _dbSet.Update(t);
-            await _context.SaveChangesAsync();
-        }
-        public async Task Delete(T t)
-        {
-            _dbSet.Remove(t);
-            await _context.SaveChangesAsync();
+            var connection = _context.Database.GetDbConnection();
+
+            if (connection.State != ConnectionState.Open)
+            {
+                await connection.OpenAsync();
+            }
+
+            return await connection.QueryAsync(sql, transaction: transaction);
         }
         public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.FirstOrDefaultAsync(predicate);
         }
+        #region CRUD
+
+        public virtual async Task Create(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+        public virtual async Task Update(T t)
+        {
+            _dbSet.Update(t);
+        }
+        public async Task Delete(T t)
+        {
+            _dbSet.Remove(t);
+        }
+        #endregion
     }
 }

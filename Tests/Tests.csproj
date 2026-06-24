@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Fixtures\" />
-    <Folder Include="Mocks\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
 

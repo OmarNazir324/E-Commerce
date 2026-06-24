@@ -7,6 +7,7 @@ namespace Application.Features.Product.DTOs
     {
         public decimal Price { get; set; }
         public String CategoryName { get; set; }
-        
+        public int Stock { get; set; }
+
     }
 }

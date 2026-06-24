@@ -2,6 +2,7 @@
 using Application.Features.CategoryFeatuure.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -16,10 +17,12 @@ namespace Application.Features.CategoryFeatuure.Service
     {
         private readonly IMainInterFace<Category> _repo;
         private readonly IMapper _mapper;
-        public CategoryService(IMainInterFace<Category> repo,IMapper mapper)
+        private readonly IUnitOfWork _uow;
+        public CategoryService(IMainInterFace<Category> repo,IMapper mapper,IUnitOfWork uow)
         {
             this._mapper = mapper;
             this._repo = repo;
+            this._uow = uow;
         }
         public async Task<IEnumerable<CategoryDTO>> GetAll()
         {
@@ -37,18 +40,22 @@ namespace Application.Features.CategoryFeatuure.Service
             
         public async Task Create(CreateCategoryDTO createCategoryDTO)
         {
+
             var category = _mapper.Map<Category>(createCategoryDTO);
             await _repo.Create(category);
+            await _uow.BeginTransactionAsync();
         }
         public async Task Update(UpdateCategoryDTO updateCategoryDTO)
         {
             var category = _mapper.Map<Category>(updateCategoryDTO);
             await _repo.Update(category);
+            await _uow.SaveChangesAsync();
         }
         public async Task Delete(int id)
         {
             var category=await _repo.GetByID(id);
             await _repo.Delete(category);
+            await _uow.SaveChangesAsync();
         }
     }
 }
