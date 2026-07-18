@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
+﻿using System.Data;
 
-namespace InfraStructure.Persistence.UnitOfWork
+namespace InfraStructure.Persistence.UnitOfWork;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork:IDisposable
-    {
-        Task<int> SaveChangesAsync();
+    Task<int> SaveChangesAsync();
 
-        Task BeginTransactionAsync();
+    Task BeginTransactionAsync();
 
-        Task CommitTransactionAsync();
+    Task CommitTransactionAsync();
+    Task CommitTransactionAndSaveChangesAsync();
 
-        Task RollbackTransactionAsync();
-        IDbTransaction? CurrentTransaction { get; }
-    }
+    Task RollbackTransactionAsync();
+    IDbTransaction? CurrentTransaction { get; }
 }

@@ -2,46 +2,55 @@
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 
-namespace Application.CrudServiceGeneric
+namespace Application.CrudServiceGeneric;
+
+public class MainServiceCrud<CreateDTO, UpdateDTO, MainEntity> : ImainServiceCRUD<CreateDTO, UpdateDTO, MainEntity>
+   where CreateDTO : class where UpdateDTO : class where MainEntity : class
 {
-    public class MainServiceCrud<CreateDTO,UpdateDTO,MainEntity>:ImainServiceCRUD<CreateDTO, UpdateDTO>
-        where CreateDTO : class where UpdateDTO : class where MainEntity : class
+    private readonly IMainInterFace<MainEntity> _repo;
+    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitofwork;
+    public MainServiceCrud(IMainInterFace<MainEntity> repo, IMapper mapper, IUnitOfWork unitOfWork)
     {
-        private readonly IMainInterFace<MainEntity> _repo;
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
-        public MainServiceCrud(IMainInterFace<MainEntity> repo,IMapper mapper,IUnitOfWork uow)
+        _repo = repo;
+        _mapper = mapper;
+        _unitofwork = unitOfWork;
+    }
+    public virtual async Task<(bool Status, String MSG, MainEntity? entity)> Create(CreateDTO create, params object?[] parameters)
+    {
+        try
         {
-            _repo= repo;
-            _mapper= mapper;
-            _uow = uow;
-        }
-        public virtual async Task Create(CreateDTO create)
-        {   
             var result = _mapper.Map<MainEntity>(create);
             await _repo.Create(result);
-            await _uow.SaveChangesAsync();
+            await _unitofwork.SaveChangesAsync();
+            return (true, "Success", result);
         }
-        public virtual async Task Update(UpdateDTO update)
+        catch (Exception ex)
         {
-            var result = _mapper.Map<MainEntity>(update);
-            await _repo.Update(result);
-            await _uow.SaveChangesAsync();
-        }
-        public virtual async Task Delete(int id)
-        {
-            var result = await _repo.GetByID(id);
-            try
-            {
-                await _repo.Delete(result);
-                await _uow.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                await _uow.RollbackTransactionAsync();
-                throw ex;
-            }
-        }
-    }
 
+            return (false, ex.Message, null);
+        }
+
+
+    }
+    public virtual async Task Update(UpdateDTO update)
+    {
+        var result = _mapper.Map<MainEntity>(update);
+        await _repo.Update(result);
+        await _unitofwork.SaveChangesAsync();
+    }
+    public virtual async Task<(Boolean Status, String? msg)> Delete(int id, params object?[] parameters)
+    {
+        var result = await _repo.GetByID(id);
+        if (result is null) return (false, "Can't Find This Object");
+        await _repo.Delete(result);
+        await _unitofwork.SaveChangesAsync();
+        return (true, null);
+    }
+    public virtual async Task<(Boolean Status, String? msg)> Delete(MainEntity t, params object?[] parameters)
+    {
+        await _repo.Delete(t);
+        await _unitofwork.SaveChangesAsync();
+        return (true, Task.CompletedTask.ToString());
+    }
 }

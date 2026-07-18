@@ -32,20 +32,21 @@ public class OrderService:MainServiceCrud<CreateOrderDTO,UpdateOrderDTO,Order> ,
         var result= await _repo.GetByID(id);
         return _mapper.Map<OrderDTO>(result);
     }
-    public override async Task Create(CreateOrderDTO create)
+    public async override Task<(bool Status, string MSG, Order? entity)> Create(CreateOrderDTO create, params object?[] parameters)
     {
         try
         {
-            var result =_mapper.Map<Order>(create);
+            var result = _mapper.Map<Order>(create);
             await _uow.BeginTransactionAsync();
             await _repo.Create(result);
             await _uow.SaveChangesAsync();
             await _uow.CommitTransactionAsync();
+            return (true, String.Empty, null);
         }
         catch (Exception ex)
         {
             _uow.RollbackTransactionAsync();
-            throw ex;
+            return (false,ex.Message, null);
         }
     }
     

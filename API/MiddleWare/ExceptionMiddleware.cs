@@ -29,7 +29,16 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex,
+                         "Unhandled exception.\n" +
+                         "Method: {Method}\n" +
+                         "Path: {Path}\n" +
+                         "TraceId: {TraceId}\n" +
+                         "User: {User}",
+                         context.Request.Method,
+                         context.Request.Path,
+                         context.TraceIdentifier,
+                         CurrentUser.GetCurrent_User().EmpCode);
 
             await HandleExceptionAsync(context, ex, _env);
         }

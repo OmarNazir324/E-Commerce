@@ -2,8 +2,8 @@
 using InfraStructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.Common;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 namespace InfraStructure.Repositories.Generic
 {
@@ -20,7 +20,8 @@ namespace InfraStructure.Repositories.Generic
             _dbSet = _context.Set<T>();
 
         }
-        public AppdbContext GetCurrentContext() => _context;
+        public AppdbContext GetCurrentContext => _context;
+        public DbConnection GetConnection => _context.Database.GetDbConnection();
         public async Task<IEnumerable<T>> GetALL()
         {
             return await _dbSet.AsNoTracking().ToListAsync();
@@ -101,14 +102,14 @@ namespace InfraStructure.Repositories.Generic
                 .Where(predicate)
                 .ToListAsync();
         }
-        public async Task<T?> GetByID(int id)
+        public virtual async Task<T?> GetByID(int id)
         {
             return await _dbSet.FindAsync(id);
         }
         public async Task<IEnumerable<T>> GetSelectedFields<T>(string sql, IDbTransaction? transaction = null)
             where T : class
         {
-            using var connection = _context.Database.GetDbConnection();
+            var connection = _context.Database.GetDbConnection();
             if (connection.State == ConnectionState.Closed)
             {
                 await connection.OpenAsync();

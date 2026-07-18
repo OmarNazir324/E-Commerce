@@ -16,7 +16,7 @@ namespace InfraStructure.Persistence.UnitOfWork
             _context = context;
         }
         public IDbTransaction? CurrentTransaction =>
-            _transaction?.GetDbTransaction();
+        _transaction?.GetDbTransaction();
         public async Task BeginTransactionAsync()
         {
             if (_transaction == null)
@@ -37,6 +37,25 @@ namespace InfraStructure.Persistence.UnitOfWork
 
                 if (_transaction != null)
                 {
+                    await _transaction.CommitAsync();
+                    await _transaction.DisposeAsync();
+                    _transaction = null;
+                }
+            }
+            catch
+            {
+                await RollbackTransactionAsync();
+                throw;
+            }
+        }
+        public async Task CommitTransactionAndSaveChangesAsync()
+        {
+            try
+            {
+
+                if (_transaction != null)
+                {
+                    await SaveChangesAsync();
                     await _transaction.CommitAsync();
                     await _transaction.DisposeAsync();
                     _transaction = null;

@@ -1,10 +1,10 @@
 ﻿using Domain.Entities;
-using InfraStructure.Interfaces;
 using InfraStructure.Persistence;
 using InfraStructure.Repositories.Generic;
+using InfraStructure.Repositories.Specific.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace InfraStructure.Repositories.Specific;
+namespace InfraStructure.Repositories.Specific.Repository;
 
 public class Order_itemsRepository:MainRepository<Order_items>,IOrder_itemsRepository
 {

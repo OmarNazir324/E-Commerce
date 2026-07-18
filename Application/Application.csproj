@@ -21,11 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InfraStructure\InfraStructure.csproj" />
+    <Folder Include="Features\Order_ItemsFeature\Validators\" />
+    <Folder Include="Features\_Template\DTOs\" />
+    <Folder Include="Features\_Template\Interfaces\" />
+    <Folder Include="Features\_Template\Mapping\" />
+    <Folder Include="Features\_Template\Service\" />
+    <Folder Include="Features\_Template\Validators\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Order_ItemsFeature\Validators\" />
+    <ProjectReference Include="..\InfraStructure\InfraStructure.csproj" />
   </ItemGroup>
 
 </Project>

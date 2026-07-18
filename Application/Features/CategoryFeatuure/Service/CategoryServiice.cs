@@ -1,4 +1,5 @@
-﻿using Application.Features.CategoryFeatuure.DTOs;
+﻿using Application.CrudServiceGeneric;
+using Application.Features.CategoryFeatuure.DTOs;
 using Application.Features.CategoryFeatuure.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -13,12 +14,13 @@ using System.Threading.Tasks;
 
 namespace Application.Features.CategoryFeatuure.Service
 {
-    public class CategoryService:ICategoryService
+    public class CategoryService:MainServiceCrud<CreateCategoryDTO,UpdateCategoryDTO,Category>,ICategoryService
     {
         private readonly IMainInterFace<Category> _repo;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _uow;
         public CategoryService(IMainInterFace<Category> repo,IMapper mapper,IUnitOfWork uow)
+            :base(repo,mapper,uow)
         {
             this._mapper = mapper;
             this._repo = repo;
@@ -43,7 +45,6 @@ namespace Application.Features.CategoryFeatuure.Service
 
             var category = _mapper.Map<Category>(createCategoryDTO);
             await _repo.Create(category);
-            await _uow.BeginTransactionAsync();
         }
         public async Task Update(UpdateCategoryDTO updateCategoryDTO)
         {

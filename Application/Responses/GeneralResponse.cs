@@ -17,5 +17,7 @@ namespace Application.Responses
         public List<string>? Errors { get; set; }
 
         public int StatusCode { get; set; }
+        public int? TotalRecords { get; set; }
+
     }
 }

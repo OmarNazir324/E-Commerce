@@ -10,6 +10,7 @@ namespace Domain.Enums
     {
         User = 0,
         Admin = 1,
-        AdminiStrator = 2
+        AdminiStrator = 2,
+        Developer = 3   
     }
 }

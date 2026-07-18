@@ -10,6 +10,5 @@ public class CommonEntity
     public string? Description { set; get; }
     public DateTime CreatedAt { set; get; } 
     public DateTime? UpdatedAt { set; get; } 
-    public int? User_Code { get; set; }
 
 }

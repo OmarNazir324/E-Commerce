@@ -4,10 +4,8 @@ using Application.Features.ProductFeature.Service;
 using AutoMapper;
 using Domain.Entities;
 using FluentAssertions;
-using InfraStructure.Persistence;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Moq;
 using Xunit;
 namespace Tests.Services;
@@ -26,7 +24,7 @@ public class ProductServiceTests
 
     }
     [Fact]
-    public async Task GetProductById_ShouldReturnProduct()
+    public async Task GetProductById_ShouldReturnProduct_WhenProductExists()
     {
         var product = new Product
         {
@@ -49,7 +47,7 @@ public class ProductServiceTests
         result.Should().NotBeNull();
     }
     [Fact]
-    public async Task GetProductById_ShouldReturnNull()
+    public async Task GetProductById_ShouldReturnNull_WhenProductDoesnotExist()
     {
         var productDTO = new ProductDTO
         {
@@ -88,9 +86,27 @@ public class ProductServiceTests
         var service = new ProductService(_mapperMock.Object, _productRepositoryMock.Object, _uow.Object);
         product.Id.Should().Be(0);
         await service.Delete(1);
-        _productRepositoryMock.Verify(x=> x.GetByID(1), Times.Once());
-        _productRepositoryMock.Verify(x=>x.Delete(product) , Times.Once());
-        _uow.Verify(u=> u.SaveChangesAsync(), Times.Once());
+        _productRepositoryMock.Verify(x => x.GetByID(1), Times.Once());
+        _productRepositoryMock.Verify(x => x.Delete(product), Times.Once());
+        _uow.Verify(u => u.SaveChangesAsync(), Times.Once());
+    }
+    [Fact]
+    public async Task DeleteProduct_ShouldDeleteProduct()
+    {
+        var product = new Product();
+        var Productdto = new ProductDTO
+        {
+            Id = 1,
+            Name = "Omar"
+        };
+        _mapperMock.Setup(x => x.Map<Product>(Productdto)).Returns(product);
+        _productRepositoryMock.Setup(x=> x.GetByID(Productdto.Id)).ReturnsAsync(product);
+        _productRepositoryMock.Setup(x => x.Delete(product));
+        var service = new ProductService(_mapperMock.Object, _productRepositoryMock.Object, _uow.Object);
+        var result = await service.Delete(Productdto.Id);
+        product.Should().NotBeNull();
+        result.Status.Should().BeTrue();
+        result.msg.Should().BeNullOrEmpty();
     }
 
 }

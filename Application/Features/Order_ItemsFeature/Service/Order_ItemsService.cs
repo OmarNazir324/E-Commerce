@@ -3,8 +3,8 @@ using Application.Features.Order_ItemsFeature.DTOs;
 using Application.Features.Order_ItemsFeature.InterFace;
 using AutoMapper;
 using Domain.Entities;
-using InfraStructure.Interfaces;
 using InfraStructure.Persistence.UnitOfWork;
+using InfraStructure.Repositories.Specific.Interfaces;
 
 namespace Application.Features.Order_ItemsFeature.Service;
 

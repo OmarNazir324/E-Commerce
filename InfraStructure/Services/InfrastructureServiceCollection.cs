@@ -1,7 +1,7 @@
-﻿using InfraStructure.Interfaces;
-using InfraStructure.Persistence.UnitOfWork;
+﻿using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
-using InfraStructure.Repositories.Specific;
+using InfraStructure.Repositories.Specific.Interfaces;
+using InfraStructure.Repositories.Specific.Repository;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InfraStructure.Services
