@@ -7,10 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace Application.Features.LoginFeature.Interfaces;
 
 public interface ILoginService
-{
-    Task<bool> CheckUserExist(LoginDto loginDto);
+{   
     Task<LoginResponse> Login(LoginDto loginDto);
-    JwtSecurityToken CreateAccessToken(AppUser user);
-    String CreateRefreshToken();
-    Task<LoginDto> Register(AppUser appUser);
+    Task<LoginResponse> Register(RigesterDto rigesterDto);
 }

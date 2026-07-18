@@ -29,34 +29,53 @@ public class LoginService : ILoginService
     private readonly IUnitOfWork _uow;
     private readonly IPasswordHasher<AppUser> _passwordhasher;
     private readonly IServiceProvider _serviceProvider;
-    public LoginService(IServiceProvider serviceProvider, IMainInterFace<RefreshToken> refreshtoken_repo, IMainInterFace<AppUser> appuser_repo, IMapper mapper, IUnitOfWork uow)
+    public LoginService(IPasswordHasher<AppUser> passwordhasher,IServiceProvider serviceProvider, IMainInterFace<RefreshToken> refreshtoken_repo, IMainInterFace<AppUser> appuser_repo, IMapper mapper, IUnitOfWork uow)
     {
         _refreshtoken_repo = refreshtoken_repo;
         _appuser_repo = appuser_repo;
         _mapper = mapper;
         _uow = uow;
         _serviceProvider = serviceProvider;
+        _passwordhasher = passwordhasher;
     }
     private DataBaseOptions.DataBaseOptions Get_DataBaseOptions()
     {
         return _serviceProvider.GetService<IOptions<DataBaseOptions.DataBaseOptions>>()!.Value;
     }
-    public async Task<bool> CheckUserExist(LoginDto loginDto)
+    public async Task<(bool Exist, AppUser user)> CheckUserExist(String Email)
     {
-        return true;
+        var result = await _appuser_repo.FindAsync(x => EF.Functions.Like(Email, $"%{x.User_Email}%"));
+        var Exist = result.Count() <= 0 && result.FirstOrDefault() is null;
+        return (Exist, result.FirstOrDefault()!);
     }
-    public  async Task<LoginResponse> Register(RigesterDto rigesterDto)
+    public async Task<LoginResponse> Register(RigesterDto rigesterDto)
     {
-        
+        var ExistUser = await CheckUserExist(rigesterDto.Email);
+        if (ExistUser.Exist)
+        {
+            return await Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
+        }
+        else
+        {
+            await _appuser_repo.Create(new AppUser
+            {
+                User_Email = rigesterDto.Email,
+                User_Password = _passwordhasher.HashPassword(new AppUser(), rigesterDto.Password),
+                Name = rigesterDto.UserName,
+                Is_Admin = false
+            });
+            await _uow.SaveChangesAsync();
+            return await Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
+        }
     }
     public async Task<LoginResponse> Login(LoginDto loginDto)
     {
-        var result = await _appuser_repo.FindAsync(x => EF.Functions.Like(loginDto.Email, $"%{x.User_Email}%"));
-        var Exsit = result.Count() <= 0 && result.FirstOrDefault() is null;
-        if (Exsit)
+        var ExistUser = await CheckUserExist(loginDto.Email);
+
+        if (ExistUser.Exist)
         {
             var user = _mapper.Map<AppUser>(loginDto);
-            var orginalPassword = _passwordhasher.VerifyHashedPassword(user, user.User_Password, result.FirstOrDefault().User_Password);
+            var orginalPassword = _passwordhasher.VerifyHashedPassword(user, user.User_Password, ExistUser.user.User_Password);
             if (orginalPassword == PasswordVerificationResult.Success)
             {
                 var accesstoken = CreateAccessToken(user);
@@ -83,7 +102,7 @@ public class LoginService : ILoginService
         }
         return null;
     }
-    public JwtSecurityToken CreateAccessToken(AppUser user)
+    private JwtSecurityToken CreateAccessToken(AppUser user)
     {
         var datbaseoptions = Get_DataBaseOptions();
         var claims = new List<Claim>
@@ -102,7 +121,7 @@ public class LoginService : ILoginService
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
         return accesstoken;
     }
-    public String CreateRefreshToken()
+    private String CreateRefreshToken()
     {
         var randomBytes = new byte[64];
 
