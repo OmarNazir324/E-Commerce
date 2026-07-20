@@ -1,5 +1,6 @@
 ﻿using Application.Features.OrderFeature.DTOs;
 using Application.Features.OrderFeature.InterFace;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;

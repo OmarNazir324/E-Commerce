@@ -1,15 +1,18 @@
 ﻿using Domain.Common;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace InfraStructure.Persistence;
-public sealed class AppdbContext : IdentityDbContext<AppUser>
+public sealed class AppdbContext :DbContext
 {
     public DbSet<Domain.Entities.Product> Products { get; set; }
     public DbSet<Category> categories { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Order_items> Order_Items { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
+    
 
     public AppdbContext(DbContextOptions options) : base(options)
     {
@@ -78,6 +81,10 @@ public sealed class AppdbContext : IdentityDbContext<AppUser>
             .WithMany(c => c.SubCategories)
             .HasForeignKey(c => c.Main_Category)
             .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<RefreshToken>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.RefreshTokens)
+            .HasForeignKey(x => x.U_ID);
 
         base.OnModelCreating(modelBuilder);
     }

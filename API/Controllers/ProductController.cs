@@ -1,12 +1,14 @@
 ﻿using Application.Exceptions;
 using Application.Features.Product.Interfaces;
 using Application.Features.ProductFeature.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;

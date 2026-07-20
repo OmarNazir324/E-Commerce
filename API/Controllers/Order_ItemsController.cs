@@ -1,11 +1,13 @@
 ﻿using Application.Features.Order_ItemsFeature.DTOs;
 using Application.Features.Order_ItemsFeature.InterFace;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class Order_ItemsController : ControllerBase
 {
     private readonly IOrder_ItemsService _order_ItemsService;

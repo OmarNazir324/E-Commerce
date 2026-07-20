@@ -1,12 +1,14 @@
 ﻿using Application.Exceptions;
 using Application.Features.CustomerFeature.DTOs;
 using Application.Features.CustomerFeature.InterFaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;

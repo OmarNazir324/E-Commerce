@@ -1,12 +1,14 @@
 ﻿using Application.Exceptions;
 using Application.Features.CategoryFeatuure.DTOs;
 using Application.Features.CategoryFeatuure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

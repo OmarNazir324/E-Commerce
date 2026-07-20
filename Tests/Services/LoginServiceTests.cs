@@ -1,11 +1,19 @@
 ﻿
+using Application.DataBaseOptions;
 using Application.Features.LoginFeature.DTOs;
+using Application.Features.LoginFeature.Interfaces;
+using Application.Responses;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
+using FluentAssertions;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Moq;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace Tests.Services;
@@ -17,7 +25,8 @@ public class LoginServiceTests
     private readonly Mock<IUnitOfWork> _mock_uow;
     private readonly Mock<IMapper> _mock_mapper;
     private readonly Mock<IPasswordHasher<AppUser>> _mock_passwordhasher;
-    private readonly Mock<IServiceProvider> _mock_serviceprovider;
+    private readonly Mock<ILoginService> _mock_service;
+    private readonly Mock<IHttpContextAccessor> _mock;
     public LoginServiceTests()
     {
         _mock_mapper = new Mock<IMapper>();
@@ -25,25 +34,164 @@ public class LoginServiceTests
         _mock_repo = new Mock<IMainInterFace<AppUser>>();
         _mock_uow = new Mock<IUnitOfWork>();
         _mock_passwordhasher = new Mock<IPasswordHasher<AppUser>>();
-        _mock_serviceprovider = new Mock<IServiceProvider>();
+        _mock_service = new Mock<ILoginService>();
+        _mock = new Mock<IHttpContextAccessor>();
     }
     [Fact]
     public async Task Login_ShouldReturnLoginreponse_WhenEmailAndPasswordCorrect()
     {
-      var logindto = new LoginDto
-      {
-        Email = "omarr324324@gmail.com",
-        Password ="12345678"
-       };
+        #region Arrange
+        var logindto = new LoginDto{
+            Email = "omarr324324@gmail.com",
+            Password = "12345678"
+        };
+        var datbaseoptions = Options.Create( new DataBaseOptions
+        {
+            RefreshTokenDays = "1",
+            Secret ="VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
+            AccessTokenMinutesForDevelopment = "1",
+            AccessTokenMinutes = "0",
+            ValidAudience = "UnitTesting",
+            ValidIssuer = "UnitTest"
+        });
         var user = new AppUser { User_Email = logindto.Email, User_Password = logindto.Password, Id = 1, Name = "Omar" };
-        _mock_repo.Setup(x=> x.FindAsync(x=> x.User_Email == logindto.Email)).ReturnsAsync(new List<AppUser> { user });
-        _mock_mapper.Setup(x=> x.Map<AppUser>(logindto)).Returns(user); 
 
-       var service = new Application.Features.LoginFeature.Service.LoginService(_mock_passwordhasher.Object,_mock_serviceprovider.Object, _mock_refreshtoken_repo.Object, _mock_repo.Object, _mock_mapper.Object, _mock_uow.Object);
+        _mock_repo.Setup(x => x.FindAsync(It.IsAny<Expression<Func<AppUser, bool>>>(), It.IsAny<Expression<Func<AppUser, object>>[]>()
+            )).ReturnsAsync(new List<AppUser> { user });
+        _mock_mapper.Setup(x => x.Map<AppUser>(logindto)).Returns(user);
+        _mock_passwordhasher.Setup(x => x.VerifyHashedPassword(user, user.User_Password, logindto.Password))
+            .Returns(PasswordVerificationResult.Success);
+        _mock_service.Setup(x => x.CheckUserExist(logindto.Email)).ReturnsAsync((true, user));
+        _mock_service.Setup(x => x.CreateAccessToken(It.IsAny<AppUser>())).Returns("TestToken");
+        var service = new Application.Features.LoginFeature.Service.LoginService(_mock.Object,_mock_passwordhasher.Object,datbaseoptions, _mock_refreshtoken_repo.Object, _mock_repo.Object, _mock_mapper.Object, _mock_uow.Object);
+        #endregion
+
+        #region Act
         var result = await service.Login(logindto);
-        Assert.NotNull(result);
-        Assert.Equal(user.Id, result.User_id);
-        Assert.Equal(user.Name, result.User_Name);
+        #endregion
+
+        #region Assert
+        Assert.NotNull(result.response);
+        Assert.Equal(user.Id, result.response.User_id);
+        Assert.Equal(user.Name, result.response.User_Name);
+        Assert.IsType<LoginResponse>(result);
+        #endregion
+
+    }
+    [Fact]
+    public async Task Login_ShouldReturnNullResponseAndMSG_WhenWrongPassword()
+    {
+        #region Arrange
+        var logindto = new LoginDto
+        {
+            Email = "omarr324324@gmail.com",
+            Password = "12345678"
+        };
+        var datbaseoptions = Options.Create(new DataBaseOptions
+        {
+            RefreshTokenDays = "1",
+            Secret = "VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
+            AccessTokenMinutesForDevelopment = "1",
+            AccessTokenMinutes = "0",
+            ValidAudience = "UnitTesting",
+            ValidIssuer = "UnitTest"
+        });
+        var user = new AppUser { User_Email = logindto.Email, User_Password = logindto.Password, Id = 1, Name = "Omar" };
+        _mock_repo.Setup(x => x.FindAsync(It.IsAny<Expression<Func<AppUser, bool>>>(), It.IsAny<Expression<Func<AppUser, object>>[]>()
+           )).ReturnsAsync(new List<AppUser> { user });
+        _mock_mapper.Setup(x => x.Map<AppUser>(logindto)).Returns(user);
+        _mock_passwordhasher.Setup(x => x.VerifyHashedPassword(user, user.User_Password, logindto.Password))
+            .Returns(PasswordVerificationResult.Failed);
+        #endregion
+        #region Act
+        var service = new  Application.Features.LoginFeature.Service.LoginService(_mock.Object, _mock_passwordhasher.Object, datbaseoptions, _mock_refreshtoken_repo.Object, _mock_repo.Object, _mock_mapper.Object, _mock_uow.Object);
+        var result = await service.Login(logindto);
+        #endregion
+        #region Assert
+        result.response.Should().BeNull();
+        result.msg.Should().Contain("UnCorrect Password");
+        #endregion
+    }
+    [Fact]
+    public async Task Login_ShouldReturnNullResponseAndMSG_WhenWrongEmail()
+    {
+        #region Arrange
+        var logindto = new LoginDto
+        {
+            Email = "omarr324324@gmail.com",
+            Password = "12345678"
+        };
+        var datbaseoptions = Options.Create(new DataBaseOptions
+        {
+            RefreshTokenDays = "1",
+            Secret = "VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
+            AccessTokenMinutesForDevelopment = "1",
+            AccessTokenMinutes = "0",
+            ValidAudience = "UnitTesting",
+            ValidIssuer = "UnitTest"
+        });
+        var user = new AppUser { User_Email = logindto.Email, User_Password = logindto.Password, Id = 1, Name = "Omar" };
+        _mock_repo.Setup(x => x.FindAsync(It.IsAny<Expression<Func<AppUser, bool>>>(), It.IsAny<Expression<Func<AppUser, object>>[]>()
+           )).ReturnsAsync(new List<AppUser> {  });
+        #endregion
+        #region Act
+        var service = new Application.Features.LoginFeature.Service.LoginService(_mock.Object, _mock_passwordhasher.Object, datbaseoptions, _mock_refreshtoken_repo.Object, _mock_repo.Object, _mock_mapper.Object, _mock_uow.Object);
+        var result = await service.Login(logindto);
+        #endregion
+        #region Assert
+        result.response.Should().BeNull();
+        result.msg.Should().NotBeEmpty();
+        result.msg.Should().BeSameAs("This Email Doesn't Exist");
+        #endregion
+    }
+    [Fact]
+    public async Task Register_ShouldHashPasswordAndCreateUser()
+    {
+        #region Act
+        var registerdto = new RigesterDto
+        {
+            Email = "omarr324324@gmail.com",
+            Password = "TestPassw0rd",
+            UserName = "Omar Nazir"
+        };
+        var user = new AppUser
+        {
+            User_Email = registerdto.Email,
+            User_Password = registerdto.Password,
+            Id = 1,
+            Name = "Omar"
+        };
+        var datbaseoptions = Options.Create(new DataBaseOptions
+        {
+            RefreshTokenDays = "1",
+            Secret = "VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
+            AccessTokenMinutesForDevelopment = "1",
+            AccessTokenMinutes = "0",
+            ValidAudience = "UnitTesting",
+            ValidIssuer = "UnitTest"
+        });
+        _mock_repo.Setup(x => x.FindAsync(It.IsAny<Expression<Func<AppUser, bool>>>()))
+            .ReturnsAsync(new List<AppUser> { });
+        _mock_passwordhasher
+    .Setup(x => x.HashPassword(
+        It.IsAny<AppUser>(),
+        registerdto.Password))
+    .Returns("HashedPassword");
+        #endregion
+        #region Act
+        var service = new Application.Features.LoginFeature.Service.LoginService(_mock.Object, _mock_passwordhasher.Object, datbaseoptions, _mock_refreshtoken_repo.Object, _mock_repo.Object, _mock_mapper.Object, _mock_uow.Object);
+        var result = await service.Register(registerdto);
+        #endregion
+        #region Assert
+        _mock_repo.Verify(x => x.Create(
+            It.Is<AppUser>(u =>
+                u.User_Email == registerdto.Email &&
+                u.Name == registerdto.UserName &&
+                u.User_Password == "HashedPassword" &&
+                u.Is_Admin == false)),
+            Times.Once);
+        _mock_passwordhasher.Verify(x => x.HashPassword(It.IsAny<AppUser>(), registerdto.Password), Times.Once);
+        #endregion
     }
 
 }

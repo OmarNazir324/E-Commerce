@@ -1,5 +1,7 @@
 ﻿using Application.Exceptions;
+using Application.Features.LoginFeature.Interfaces;
 using Application.Responses;
+using InfraStructure.Identity;
 using System.Net;
 using System.Text.Json;
 
@@ -10,7 +12,7 @@ public class ExceptionMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
     private readonly IHostEnvironment _env;
-
+    
     public ExceptionMiddleware(
         RequestDelegate next,
         ILogger<ExceptionMiddleware> logger,
@@ -19,16 +21,20 @@ public class ExceptionMiddleware
         _next = next;
         _logger = logger;
         _env = env;
+       
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ILoginService login_serv)
     {
+        
+       
         try
         {
             await _next(context);
         }
         catch (Exception ex)
         {
+            var user = await login_serv.GetUser();
             _logger.LogError(ex,
                          "Unhandled exception.\n" +
                          "Method: {Method}\n" +
@@ -38,7 +44,7 @@ public class ExceptionMiddleware
                          context.Request.Method,
                          context.Request.Path,
                          context.TraceIdentifier,
-                         CurrentUser.GetCurrent_User().EmpCode);
+                         user.Id);
 
             await HandleExceptionAsync(context, ex, _env);
         }

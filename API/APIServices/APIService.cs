@@ -1,4 +1,5 @@
 ﻿using API.Options;
+using Application.DataBaseOptions;
 
 namespace API.APIServices
 {
@@ -10,7 +11,7 @@ namespace API.APIServices
             _options = options;
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = _options.RedisConnectionString;
+                options.Configuration = _options.CashingUrl;
                    
             });
 

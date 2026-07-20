@@ -8,6 +8,7 @@ using InfraStructure.Authentication;
 using InfraStructure.Identity;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 using Microsoft.EntityFrameworkCore;
@@ -28,27 +29,31 @@ public class LoginService : ILoginService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uow;
     private readonly IPasswordHasher<AppUser> _passwordhasher;
-    private readonly IServiceProvider _serviceProvider;
-    public LoginService(IPasswordHasher<AppUser> passwordhasher,IServiceProvider serviceProvider, IMainInterFace<RefreshToken> refreshtoken_repo, IMainInterFace<AppUser> appuser_repo, IMapper mapper, IUnitOfWork uow)
+    private readonly DataBaseOptions.DataBaseOptions _database_options;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public LoginService(IHttpContextAccessor httpContextAccessor,IPasswordHasher<AppUser> passwordhasher,IOptions<DataBaseOptions.DataBaseOptions> _options, IMainInterFace<RefreshToken> refreshtoken_repo, IMainInterFace<AppUser> appuser_repo, IMapper mapper, IUnitOfWork uow)
     {
         _refreshtoken_repo = refreshtoken_repo;
         _appuser_repo = appuser_repo;
         _mapper = mapper;
         _uow = uow;
-        _serviceProvider = serviceProvider;
+        _database_options = _options.Value;
         _passwordhasher = passwordhasher;
+        _httpContextAccessor = httpContextAccessor;
     }
-    private DataBaseOptions.DataBaseOptions Get_DataBaseOptions()
+    
+    public async Task<(bool Exist, AppUser? user)> CheckUserExist(string email)
     {
-        return _serviceProvider.GetService<IOptions<DataBaseOptions.DataBaseOptions>>()!.Value;
+        var user = await _appuser_repo.GetCurrentContext.Set<AppUser>()
+            .Where(x => x.User_Email == email)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+
+        
+
+        return (user != null, user);
     }
-    public async Task<(bool Exist, AppUser user)> CheckUserExist(String Email)
-    {
-        var result = await _appuser_repo.FindAsync(x => EF.Functions.Like(Email, $"%{x.User_Email}%"));
-        var Exist = result.Count() <= 0 && result.FirstOrDefault() is null;
-        return (Exist, result.FirstOrDefault()!);
-    }
-    public async Task<LoginResponse> Register(RigesterDto rigesterDto)
+    public async Task<(String Msg,LoginResponse response)> Register(RigesterDto rigesterDto)
     {
         var ExistUser = await CheckUserExist(rigesterDto.Email);
         if (ExistUser.Exist)
@@ -65,46 +70,45 @@ public class LoginService : ILoginService
                 Is_Admin = false
             });
             await _uow.SaveChangesAsync();
-            return await Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
+            var result = await Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
+            return result;
         }
     }
-    public async Task<LoginResponse> Login(LoginDto loginDto)
+    public async Task<(String msg,LoginResponse response)> Login(LoginDto loginDto)
     {
         var ExistUser = await CheckUserExist(loginDto.Email);
 
         if (ExistUser.Exist)
         {
-            var user = _mapper.Map<AppUser>(loginDto);
-            var orginalPassword = _passwordhasher.VerifyHashedPassword(user, user.User_Password, ExistUser.user.User_Password);
+            var orginalPassword = _passwordhasher.VerifyHashedPassword(ExistUser.user, ExistUser.user.User_Password,loginDto.Password);
             if (orginalPassword == PasswordVerificationResult.Success)
             {
-                var accesstoken = CreateAccessToken(user);
+                var accesstoken = CreateAccessToken(ExistUser.user);
                 var refreshtoken = CreateRefreshToken();
                 await _refreshtoken_repo.Create(new RefreshToken
                 {
-                    ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(Get_DataBaseOptions().RefreshTokenDays)),
+                    ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(_database_options.RefreshTokenDays)),
                     U_Token = refreshtoken,
-                    U_ID = user.Id,
-                    User = user,
+                    U_ID = ExistUser.user.Id
                 });
                 await _uow.SaveChangesAsync();
-                CurrentUser.SetCurrent_User(user);
-                return new LoginResponse
+                CurrentUser.SetCurrent_User(ExistUser.user);
+                return ( "Login Success" ,new LoginResponse
                 {
-                    AccessToken = accesstoken.ToString(),
+                    AccessToken = accesstoken,
                     RefreshToken = refreshtoken,
-                    User_id = user.Id,
-                    User_Name = user.Name,
-                    User_Role_Name = user.UserRoles.FirstOrDefault().ToString()
-                };
+                    User_id = ExistUser.user.Id,
+                    User_Name = ExistUser.user.Name,
+                    User_Role_Name = ExistUser.user.UserRoles.FirstOrDefault().ToString()
+                });
             }
-            return null;
+            return ("UnCorrect Password" , null)!;
         }
-        return null;
+        return ("This Email Doesn't Exist" ,null)!;
     }
-    private JwtSecurityToken CreateAccessToken(AppUser user)
+    public String CreateAccessToken(AppUser user)
     {
-        var datbaseoptions = Get_DataBaseOptions();
+       
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, HashBase.Encrypt(user.Id.ToString())),
@@ -114,14 +118,14 @@ public class LoginService : ILoginService
         {
             claims.Add(new Claim(ClaimTypes.Role, userole.ToString()));
         }
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(datbaseoptions.Secret));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_database_options.Secret));
         var expires = DateTime.UtcNow.AddMinutes(
-            Convert.ToDouble(user.UserRoles.Contains(User_Roles.Admin) && user.UserRoles.Contains(User_Roles.Developer) ? datbaseoptions.AccessTokenMinutesForDevelopment : datbaseoptions.AccessTokenMinutes));
-        var accesstoken = new JwtSecurityToken(issuer: datbaseoptions.ValidIssuer, audience: datbaseoptions.ValidAudience, expires: expires, claims: claims,
+            Convert.ToDouble(user.UserRoles.Contains((int)User_Roles.Admin) && user.UserRoles.Contains((int)User_Roles.Developer) ? _database_options.AccessTokenMinutesForDevelopment : _database_options.AccessTokenMinutes));
+        var accesstoken = new JwtSecurityToken(issuer: _database_options.ValidIssuer, audience: _database_options.ValidAudience, expires: expires, claims: claims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-        return accesstoken;
+        return new JwtSecurityTokenHandler().WriteToken(accesstoken);
     }
-    private String CreateRefreshToken()
+    public String CreateRefreshToken()
     {
         var randomBytes = new byte[64];
 
@@ -130,5 +134,16 @@ public class LoginService : ILoginService
         rng.GetBytes(randomBytes);
 
         return Convert.ToBase64String(randomBytes);
+    }
+    public async Task<AppUser?> GetUser()
+    {
+        var currentuser = CurrentUser.GetCurrent_User();
+        if (currentuser != null) return currentuser;
+        var encryptedId = _httpContextAccessor.HttpContext!.User
+            .FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        var u_id = int.Parse(HashBase.Decrypt(encryptedId));
+        var user = await _appuser_repo.GetByID(u_id);
+        CurrentUser.SetCurrent_User(user!);
+        return user;
     }
 }

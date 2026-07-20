@@ -1,6 +1,7 @@
 using API.APIServices;
 using API.Extensions;
 using API.Options;
+using Application.DataBaseOptions;
 using Application.Features.ProductFeature.DTOs;
 using Application.Services;
 using AutoMapper;
@@ -78,7 +79,7 @@ namespace API
                           .AllowAnyHeader();
                 });
             });
-
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddAutoMapper(cfg => { },
                 typeof(CreateProductDTO).Assembly);
             builder.Services.AddApplicationServices();
@@ -116,7 +117,6 @@ namespace API
                 (ServiceProvider, DbContextOptionsBuilder) =>
             {
                 var DatabaseOptions = ServiceProvider.GetService<IOptions<DataBaseOptions>>()!.Value;
-                
                 DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
                 {
                     sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);
@@ -125,10 +125,7 @@ namespace API
                 DbContextOptionsBuilder.EnableDetailedErrors(DatabaseOptions.EnableDetailedErrors);
                 DbContextOptionsBuilder.EnableSensitiveDataLogging(DatabaseOptions.EnableSenstiveDataLogging);
             });
-            builder.Services
-                .AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppdbContext>()
-                .AddDefaultTokenProviders();
+           
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddAuthorization();
 
@@ -142,7 +139,7 @@ namespace API
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI();

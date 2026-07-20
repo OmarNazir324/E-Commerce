@@ -15,7 +15,7 @@ public class DataBaseOptions
 
     public String AccessTokenMinutes { get; set; }
     public String RefreshTokenDays { get; set; }
-    public String RedisConnectionString { get; set; }
+    public String CashingUrl { get; set; }
 
 }
 
