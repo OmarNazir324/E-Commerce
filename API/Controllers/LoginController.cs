@@ -11,14 +11,18 @@ namespace API.Controllers;
 
 public class LoginController : ControllerBase
 {
-    private readonly ILoginService _serviec;
-    public LoginController(ILoginService service)
-        => _serviec = service;
+    private readonly ILoginService _login_serv;
+    private readonly ITokenService _token_serv;
+    public LoginController(ILoginService login_serv,ITokenService token_serv)
+    {
+        _login_serv = login_serv;
+        _token_serv = token_serv;
+    }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
-        var result = await _serviec.Login(loginDto);
+        var result = await _login_serv.Login(loginDto);
         if (result.response is null) return NotFound(result.msg);
         return Ok(new ApiResponse<LoginResponse>
         {
@@ -33,7 +37,7 @@ public class LoginController : ControllerBase
     [HttpPost("Register")]
     public async Task<IActionResult> Register(RigesterDto rigesterDto)
     {
-        var result = await _serviec.Register(rigesterDto);
+        var result = await _login_serv.Register(rigesterDto);
         if (result.response is null) return NotFound(result.Msg);
         return Ok(new ApiResponse<LoginResponse>
         {
@@ -44,5 +48,12 @@ public class LoginController : ControllerBase
             Success = true,
             TotalRecords = 1
         });
+    }
+    [HttpPost("LogOut")]
+    public async Task<IActionResult> Logout(
+     String rereshtoken)
+    {
+        await _token_serv.RevokeRefreshToken(rereshtoken);
+        return Ok(Task.CompletedTask);
     }
 }

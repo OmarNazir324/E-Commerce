@@ -2,10 +2,10 @@
 using Application.Features.CategoryFeatuure.Service;
 using Application.Features.CustomerFeature.InterFaces;
 using Application.Features.CustomerFeature.Service;
+using Application.Features.Email.Interfaces;
+using Application.Features.Email.Service;
 using Application.Features.LoginFeature.Interfaces;
 using Application.Features.LoginFeature.Service;
-using Application.Features.Order_ItemsFeature.InterFace;
-using Application.Features.Order_ItemsFeature.Service;
 using Application.Features.OrderFeature.InterFace;
 using Application.Features.OrderFeature.Service;
 using Application.Features.Product.Interfaces;
@@ -24,9 +24,11 @@ public static class ApplicationServices
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IOrder_ItemsService, Order_ItemsService>();
         services.AddScoped<ILoginService, LoginService>();
         services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IEmailService, EmailService>();
         return services;
     }
 }

@@ -7,6 +7,7 @@ using FluentAssertions;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 using Moq;
+using Tests.Fixtures.Fakes;
 using Xunit;
 namespace Tests.Services;
 
@@ -108,5 +109,44 @@ public class ProductServiceTests
         result.Status.Should().BeTrue();
         result.msg.Should().BeNullOrEmpty();
     }
-
+    [Fact]
+    public async Task CreateFakeProduct()
+    {
+        var product = new Product
+        {
+            Id = 1,
+            Price = 90
+        };
+        var repo = new FakeProductRepository();
+        await repo.Create(product);
+        repo.Products.Should().HaveCount(1);
+        repo.Products.Should().Contain(product);
+    }
+    [Fact]
+    public async Task GetFakeProductByID()
+    {
+        var product = new Product
+        {
+            Id = 1,
+            Price = 90
+        };
+        var repo = new FakeProductRepository();
+        await repo.Create(product);
+        var fakeproduct = await repo.GetByID(product.Id);
+        product.Should().BeSameAs(fakeproduct);
+    }
+    [Fact]
+    public async Task GetTotalPrice()
+    {
+        var product = new Product
+        {
+            Id = 1,
+            Price = 90,
+            Stock = 1
+        };
+        var repo = new FakeProductRepository();
+        await repo.Create(product);
+        var totalprice = await repo.GetTotalAmount(product.Id);
+        totalprice.Should().Be(product.Stock * product.Price);
+    }
 }

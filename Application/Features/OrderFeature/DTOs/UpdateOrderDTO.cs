@@ -15,7 +15,7 @@ namespace Application.Features.OrderFeature.DTOs
         public bool IsRefunded { get; set; }
         
         public bool IsDeleted { get; set; }
-        public ICollection<UpdateOrder_ItemsDTO> Order_Items { get; set; }
+        public ICollection<UpdateOrder_ItemsDTO> UpdateOrder_Items { get; set; }
 
     }
 }

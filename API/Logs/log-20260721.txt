@@ -1,0 +1,9 @@
+2026-07-21 12:35:31.811 +03:00 [WRN] Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+2026-07-21 12:35:31.999 +03:00 [WRN] No store type was specified for the decimal property 'TotalPrice' on entity type 'Order'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-21 12:35:32.010 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Product'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-21 12:35:32.611 +03:00 [WRN] You do not have a valid license key for the Lucky Penny software AutoMapper. This is allowed for development and testing scenarios. If you are running in production you are required to have a licensed version. Please visit https://luckypennysoftware.com to obtain a valid license.
+2026-07-21 12:36:34.896 +03:00 [INF] HTTP POST /api/Login/Register responded 200 in 29316.2267 ms
+2026-07-21 12:38:20.909 +03:00 [INF] HTTP POST /api/Category responded 200 in 158.7034 ms
+2026-07-21 12:38:27.771 +03:00 [INF] HTTP GET /api/Category responded 200 in 234.5785 ms
+2026-07-21 12:38:37.937 +03:00 [INF] HTTP POST /api/Product responded 200 in 177.4677 ms
+2026-07-21 12:38:43.117 +03:00 [INF] HTTP GET /api/Product responded 200 in 81.0616 ms

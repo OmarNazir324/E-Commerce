@@ -24,7 +24,7 @@ public class ExceptionMiddleware
        
     }
 
-    public async Task InvokeAsync(HttpContext context, ILoginService login_serv)
+    public async Task InvokeAsync(HttpContext context, ICurrentUserService current_user_serv)
     {
         
        
@@ -34,7 +34,7 @@ public class ExceptionMiddleware
         }
         catch (Exception ex)
         {
-            var user = await login_serv.GetUser();
+            var user = await current_user_serv.GetUser();
             _logger.LogError(ex,
                          "Unhandled exception.\n" +
                          "Method: {Method}\n" +

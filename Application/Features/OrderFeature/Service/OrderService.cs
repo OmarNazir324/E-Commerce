@@ -5,32 +5,30 @@ using AutoMapper;
 using Domain.Entities;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Application.Features.OrderFeature.Service;
 
-public class OrderService:MainServiceCrud<CreateOrderDTO,UpdateOrderDTO,Order> ,IOrderService
+public class OrderService : MainServiceCrud<CreateOrderDTO, UpdateOrderDTO, Order>, IOrderService
 {
     private readonly IMainInterFace<Domain.Entities.Order> _repo;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uow;
-    public OrderService(IMainInterFace<Domain.Entities.Order> repo,IMapper mapper,IUnitOfWork uow)
-        :base(repo,mapper,uow)
+    public OrderService(IMainInterFace<Domain.Entities.Order> repo, IMapper mapper, IUnitOfWork uow)
+        : base(repo, mapper, uow)
     {
         _repo = repo;
         _mapper = mapper;
-        _uow= uow;
+        _uow = uow;
     }
     public async Task<IEnumerable<OrderDTO>> GetAll()
     {
-        var result =await _repo.GetAllAsync(x=> x.Customer);
+        var result = await _repo.GetAllAsync(x => x.Customer, x => x.Order_Items);
         return _mapper.Map<IEnumerable<OrderDTO>>(result);
     }
     public async Task<OrderDTO> GetById(int id)
     {
-        var result= await _repo.GetByID(id);
-        return _mapper.Map<OrderDTO>(result);
+        var result = await _repo.FindAsync(x => x.Id == id, x => x.Order_Items);
+        return _mapper.Map<OrderDTO>(result.FirstOrDefault());
     }
     public async override Task<(bool Status, string MSG, Order? entity)> Create(CreateOrderDTO create, params object?[] parameters)
     {
@@ -45,9 +43,9 @@ public class OrderService:MainServiceCrud<CreateOrderDTO,UpdateOrderDTO,Order> ,
         }
         catch (Exception ex)
         {
-            _uow.RollbackTransactionAsync();
-            return (false,ex.Message, null);
+            await _uow.RollbackTransactionAsync();
+            return (false, ex.Message, null);
         }
     }
-    
+
 }
