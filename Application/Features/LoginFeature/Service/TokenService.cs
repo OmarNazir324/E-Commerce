@@ -1,6 +1,4 @@
-﻿
-using Application.DataBaseOptions;
-using Application.Features.LoginFeature.Interfaces;
+﻿using Application.Features.LoginFeature.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
 using InfraStructure.Authentication;
@@ -14,11 +12,11 @@ using System.Text;
 
 namespace Application.Features.LoginFeature.Service;
 
-public class TokenService :ITokenService
+public class TokenService : ITokenService
 {
     private readonly DataBaseOptions.DataBaseOptions _database_options;
     private readonly IMainInterFace<RefreshToken> _refresh_repo;
-    public TokenService(IOptions<DataBaseOptions.DataBaseOptions> database_options,IMainInterFace<RefreshToken> refresh_repo)
+    public TokenService(IOptions<DataBaseOptions.DataBaseOptions> database_options, IMainInterFace<RefreshToken> refresh_repo)
     {
         _database_options = database_options.Value;
         _refresh_repo = refresh_repo;

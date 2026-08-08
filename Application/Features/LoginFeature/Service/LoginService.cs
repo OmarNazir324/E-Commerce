@@ -8,6 +8,7 @@ using InfraStructure.Identity;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Application.Features.LoginFeature.Service;
@@ -34,7 +35,6 @@ public class LoginService : ILoginService
     }
     public async Task<(bool Exist, AppUser? user)> CheckUserExist(string email)
     {
-
         var user = await _appuser_repo.FirstOrDefaultAsync(x => x.User_Email == email);
         return (user != null, user);
     }

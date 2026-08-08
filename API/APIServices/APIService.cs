@@ -5,14 +5,16 @@ namespace API.APIServices
 {
     public static class APIService
     {
-        static DataBaseOptions _options;
-        public static IServiceCollection AddAPIService(this IServiceCollection services, IConfiguration configuration,DataBaseOptions options)
+        public static IServiceCollection AddAPIService(
+                        this IServiceCollection services,
+                        IConfiguration configuration)
         {
-            _options = options;
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = _options.CashingUrl;
-                   
+                options.Configuration =
+                    configuration.GetSection(nameof(DataBaseOptions))
+                                 .Get<DataBaseOptions>()!
+                                 .CashingUrl;
             });
 
             return services;

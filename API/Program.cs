@@ -15,10 +15,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Diagnostics;
 using System.Text;
 namespace API
 {
-    public class Program
+    public partial  class Program
     {
         public static void Main(string[] args)
         {
@@ -36,27 +37,44 @@ namespace API
 
             // Add services to the container.
             builder.Services.ConfigureOptions<DataBaseOptionsSetup>();
-            var serviceprovider = builder.Services.BuildServiceProvider().GetService<IOptions<DataBaseOptions>>()!.Value;
+            //var serviceprovider = builder.Services.BuildServiceProvider().GetService<IOptions<DataBaseOptions>>()!.Value;
 
             builder.Services.AddControllers();
-
+            
+            builder.Services.AddDbContext<AppdbContext>(
+                (ServiceProvider, DbContextOptionsBuilder) =>
+                {
+                    var DatabaseOptions = ServiceProvider.GetService<IOptions<DataBaseOptions>>()!.Value;
+                    Debug.WriteLine(">>>>>>>> USING SQL SERVER <<<<<<<<");
+                    DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
+                    {
+                        sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);
+                        // sqloptions.EnableRetryOnFailure(DatabaseOptions.RetryOnFailure);
+                    });
+                    DbContextOptionsBuilder.EnableDetailedErrors(DatabaseOptions.EnableDetailedErrors);
+                    DbContextOptionsBuilder.EnableSensitiveDataLogging(DatabaseOptions.EnableSenstiveDataLogging);
+                });
+            
             builder.Services.AddAuthentication(options =>
             {
+
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                   .AddJwtBearer(options =>
+            }).AddJwtBearer();
+            builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+                .Configure<IOptions<DataBaseOptions>>((jwt,dboptions) =>
                    {
-                       options.SaveToken = true;
-                       options.RequireHttpsMetadata = false;
-                       options.TokenValidationParameters = new TokenValidationParameters()
+                       var databaseoptions = dboptions.Value!;
+                       jwt.SaveToken = true;
+                       jwt.RequireHttpsMetadata = false;
+                       jwt.TokenValidationParameters = new TokenValidationParameters()
                        {
                            ValidateIssuer = true,
                            ValidateAudience = true,
-                           ValidAudience = serviceprovider.ValidAudience,
-                           ValidIssuer = serviceprovider.ValidIssuer,
-                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(serviceprovider.Secret))
+                           ValidAudience = databaseoptions.ValidAudience,
+                           ValidIssuer = databaseoptions.ValidIssuer,
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(databaseoptions.Secret))
                        };
                    });
 
@@ -84,7 +102,7 @@ namespace API
                 typeof(CreateProductDTO).Assembly);
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServiceCollection();
-            builder.Services.AddAPIService(configuration,serviceprovider);
+            builder.Services.AddAPIService(configuration);
 
             builder.Services.AddSwaggerGen(options =>
             {
@@ -113,19 +131,8 @@ namespace API
                     }
                 });
             });
-            builder.Services.AddDbContext<AppdbContext>(
-                (ServiceProvider, DbContextOptionsBuilder) =>
-            {
-                var DatabaseOptions = ServiceProvider.GetService<IOptions<DataBaseOptions>>()!.Value;
-                DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
-                {
-                    sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);
-                   // sqloptions.EnableRetryOnFailure(DatabaseOptions.RetryOnFailure);
-                });
-                DbContextOptionsBuilder.EnableDetailedErrors(DatabaseOptions.EnableDetailedErrors);
-                DbContextOptionsBuilder.EnableSensitiveDataLogging(DatabaseOptions.EnableSenstiveDataLogging);
-            });
-           
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddAuthorization();
 

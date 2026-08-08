@@ -6,6 +6,7 @@ using AutoMapper;
 using Domain.Entities;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
+using System.Diagnostics;
 
 namespace Application.Features.ProductFeature.Service
 {
@@ -34,7 +35,10 @@ namespace Application.Features.ProductFeature.Service
             var product = await _repo.GetByID(productId);
             return _mapper.Map<ProductDTO>(product);
         }
-        
+        public async override Task<(bool Status, string MSG, Domain.Entities.Product? entity)> Create(CreateProductDTO create, params object?[] parameters)
+        {
+            return await base.Create(create, parameters);
+        }
 
     }
 }

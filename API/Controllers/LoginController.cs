@@ -18,7 +18,17 @@ public class LoginController : ControllerBase
         _login_serv = login_serv;
         _token_serv = token_serv;
     }
-
+    /*
+     new ApiResponse<String>
+        {
+            Data = null,
+            Errors = new List<string> { result.msg },
+            Message = result.msg,
+            StatusCode = 404,
+            Success = false,
+            TotalRecords = 0
+        }
+    */
     [HttpPost]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
@@ -49,6 +59,7 @@ public class LoginController : ControllerBase
             TotalRecords = 1
         });
     }
+    [Authorize]
     [HttpPost("LogOut")]
     public async Task<IActionResult> Logout(
      String rereshtoken)

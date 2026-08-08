@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.ProductFeature.DTOs
 {
-    public class UpdateProductDTO:CreateCommnDTO
+    public class UpdateProductDTO:ViewCommonDTO
     {
        
         public decimal Price { get; set; }
