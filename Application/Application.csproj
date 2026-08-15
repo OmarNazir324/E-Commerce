@@ -22,13 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Order_ItemsFeature\InterFace\" />
-    <Folder Include="Features\Order_ItemsFeature\Mapper\" />
-    <Folder Include="Features\Order_ItemsFeature\Service\" />
-    <Folder Include="Features\Order_ItemsFeature\Validators\" />
-    <Folder Include="Features\Email\DTOs\" />
-    <Folder Include="Features\Email\Mapping\" />
-    <Folder Include="Features\Email\Validators\" />
+    <Folder Include="Features\LoginFeature\Validators\" />
+    <Folder Include="Features\EmailFeature\DTOs\" />
+    <Folder Include="Features\EmailFeature\Mapping\" />
+    <Folder Include="Features\EmailFeature\Validators\" />
     <Folder Include="Features\_Template\DTOs\" />
     <Folder Include="Features\_Template\Interfaces\" />
     <Folder Include="Features\_Template\Mapping\" />
@@ -37,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InfraStructure\InfraStructure.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

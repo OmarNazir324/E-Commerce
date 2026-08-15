@@ -1,6 +1,6 @@
-﻿using InfraStructure.Caching;
+﻿using Application.Interfaces.Cache;
+using Application.Responses;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -25,7 +25,15 @@ public class CacheController : ControllerBase
             jsonContent,
             minutes);
 
-        return Ok("Saved");
+        return Ok(new ApiResponse<Task>
+        {
+            Data = Task.CompletedTask,
+            Errors = null,
+            Message = "Saved",
+            StatusCode = 200,
+            Success = true,
+            TotalRecords = 1
+        });
     }
 
     [HttpGet]
@@ -36,13 +44,29 @@ public class CacheController : ControllerBase
         if (value == null)
             return NotFound();
 
-        return Ok(value);
+        return Ok(new ApiResponse<String>
+        {
+            Data = value,
+            TotalRecords = 1,
+            Success = true,
+            StatusCode = 200,
+            Errors =null,
+            Message = "Retrived Successfully"
+        });
     }
     [HttpDelete("{key}")]
     public async Task<IActionResult> Remove(string key)
     {
         await _cache.RemoveAsync(key);
 
-        return Ok("Cache removed successfully.");
+        return Ok(new ApiResponse<Task>
+        {
+            Data = Task.CompletedTask,
+            Message = "Cache removed successfully.",
+            Errors = null,
+            StatusCode = 200,
+            Success = true,
+            TotalRecords = 0
+        });
     }
 }

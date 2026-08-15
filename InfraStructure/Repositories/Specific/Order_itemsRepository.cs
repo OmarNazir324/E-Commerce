@@ -4,7 +4,7 @@ using InfraStructure.Repositories.Generic;
 using InfraStructure.Repositories.Specific.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace InfraStructure.Repositories.Specific.Repository;
+namespace InfraStructure.Repositories.Specific;
 
 public class Order_itemsRepository:MainRepository<Order_items>,IOrder_itemsRepository
 {

@@ -1,6 +1,6 @@
 ﻿using Application.Features.CommonDTO;
 
-namespace Application.Features.Order_ItemsFeature.DTOs;
+namespace Application.Features.OrderFeature.DTOs;
 
 public class UpdateOrder_ItemsDTO:CreateCommnDTO
 {

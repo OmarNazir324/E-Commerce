@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Application.Interfaces.Files;
 namespace Infrastructure.Files;
 
 public class FileService:IFileService

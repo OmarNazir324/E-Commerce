@@ -1,7 +1,7 @@
 ﻿using Application.Features.LoginFeature.Interfaces;
+using Application.Interfaces.HashBase;
 using Domain.Entities;
 using Domain.Enums;
-using InfraStructure.Authentication;
 using InfraStructure.Repositories.Generic;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,17 +16,19 @@ public class TokenService : ITokenService
 {
     private readonly DataBaseOptions.DataBaseOptions _database_options;
     private readonly IMainInterFace<RefreshToken> _refresh_repo;
-    public TokenService(IOptions<DataBaseOptions.DataBaseOptions> database_options, IMainInterFace<RefreshToken> refresh_repo)
+    private readonly IHashBase _hashbase;
+    public TokenService(IOptions<DataBaseOptions.DataBaseOptions> database_options, IMainInterFace<RefreshToken> refresh_repo,IHashBase hashBase)
     {
         _database_options = database_options.Value;
         _refresh_repo = refresh_repo;
+        _hashbase = hashBase;
     }
     public String CreateAccessToken(AppUser user)
     {
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, HashBase.Encrypt(user.Id.ToString())),
+            new Claim(ClaimTypes.NameIdentifier, _hashbase.Encrypt(user.Id.ToString())),
             new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         foreach (var userole in user.UserRoles)

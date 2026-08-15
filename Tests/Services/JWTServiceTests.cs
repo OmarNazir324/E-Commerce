@@ -1,10 +1,8 @@
-﻿
-using Application.DataBaseOptions;
-using Application.Features.Email.Interfaces;
+﻿using Application.DataBaseOptions;
+using Application.Features.EmailFeature.Interfaces;
 using Application.Features.LoginFeature.DTOs;
 using Application.Features.LoginFeature.Interfaces;
 using Application.Features.LoginFeature.Service;
-using AutoMapper;
 using Domain.Entities;
 using FluentAssertions;
 using InfraStructure.Persistence.UnitOfWork;

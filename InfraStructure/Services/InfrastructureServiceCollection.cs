@@ -1,7 +1,9 @@
-﻿using InfraStructure.Persistence.UnitOfWork;
+﻿using Application.Interfaces.HashBase;
+using InfraStructure.Authentication;
+using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
+using InfraStructure.Repositories.Specific;
 using InfraStructure.Repositories.Specific.Interfaces;
-using InfraStructure.Repositories.Specific.Repository;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InfraStructure.Services
@@ -13,6 +15,7 @@ namespace InfraStructure.Services
             services.AddScoped(typeof(IMainInterFace<>), typeof(MainRepository<>));
             services.AddScoped<IOrder_itemsRepository, Order_itemsRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IHashBase, HashBase>();
             return services;
         }
     }

@@ -1,17 +1,15 @@
 ﻿using Application.Features.CommonDTO;
-using Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Features.CustomerFeature.DTOs
-{
-    public class CustomerDTO:ViewCommonDTO
-    {
-        [EmailAddress]
-        public String email { get; set; }
-        [Phone]
-        public String PhoneNumber { get; set; }
+namespace Application.Features.CustomerFeature.DTOs;
 
-        public String Address { get; set; }
-        public int? OrdersCount { set; get; }
-    }
+public class CustomerDTO : ViewCommonDTO
+{
+    [EmailAddress]
+    public String email { get; set; }
+    [Phone]
+    public String PhoneNumber { get; set; }
+
+    public String Address { get; set; }
+    public int? OrdersCount { set; get; }
 }

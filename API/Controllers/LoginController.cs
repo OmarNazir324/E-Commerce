@@ -18,17 +18,7 @@ public class LoginController : ControllerBase
         _login_serv = login_serv;
         _token_serv = token_serv;
     }
-    /*
-     new ApiResponse<String>
-        {
-            Data = null,
-            Errors = new List<string> { result.msg },
-            Message = result.msg,
-            StatusCode = 404,
-            Success = false,
-            TotalRecords = 0
-        }
-    */
+    
     [HttpPost]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
@@ -65,6 +55,14 @@ public class LoginController : ControllerBase
      String rereshtoken)
     {
         await _token_serv.RevokeRefreshToken(rereshtoken);
-        return Ok(Task.CompletedTask);
+        return Ok(new ApiResponse<Task>
+        {
+            Data = Task.CompletedTask,
+            Errors = null,
+            Message = "Success",
+            StatusCode = 200,
+            Success = true,
+            TotalRecords = 1
+        });
     }
 }

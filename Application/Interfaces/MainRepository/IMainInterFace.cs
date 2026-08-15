@@ -1,5 +1,4 @@
-﻿using InfraStructure.Persistence;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 using System.Linq.Expressions;
 
@@ -12,7 +11,6 @@ public interface IMainInterFace<T>
     Task<IEnumerable<T>> GetSelectedFields<T>(String sql, IDbTransaction? transaction = null) where T : class;
     Task<IEnumerable<dynamic>> GetSelectedFields(string sql, IDbTransaction? transaction = null);
     Task<IQueryable> GetQueryable();
-    AppdbContext GetCurrentContext { get; }
     DbConnection GetConnection { get; }
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
     Task<(IEnumerable<T> Data, int TotalCount)> GetPagedAsync(

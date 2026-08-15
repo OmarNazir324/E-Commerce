@@ -1,5 +1,5 @@
 ﻿
-using Application.Features.Email.Interfaces;
+using Application.Features.EmailFeature.Interfaces;
 
 namespace Application.Features.Email.Service;
 

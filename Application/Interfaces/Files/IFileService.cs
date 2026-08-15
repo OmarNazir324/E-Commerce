@@ -1,7 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace Infrastructure.Files;
+namespace Application.Interfaces.Files;
 
 public interface IFileService
 {

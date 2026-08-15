@@ -1,4 +1,5 @@
-﻿using Infrastructure.Files;
+﻿using Application.Interfaces.Files;
+using Application.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,13 +23,29 @@ public class UploadDocumentController : ControllerBase
         var fileName =
             await _fileService.UploadAsync(file);
 
-        return Ok(fileName);
+        return Ok(new ApiResponse<String>
+        {
+            Data = fileName,
+            Errors = null,
+            Message = "Success",
+            StatusCode = 200,
+            Success = true,
+            TotalRecords = 1
+        });
     }
     [HttpDelete]
     public async Task<IActionResult> Delete(String filename)
     {
         await _fileService.DeleteAsync(filename);
-        return Ok(Task.CompletedTask);
+        return Ok(new ApiResponse<Task>
+        {
+            Data = Task.CompletedTask,
+            Errors = null,
+            Message = "Success",
+            StatusCode = 200,
+            Success = true,
+            TotalRecords = 1
+        });
     }
     [HttpGet]
     public async Task<IActionResult> GetFile(String filename)
@@ -37,10 +54,14 @@ public class UploadDocumentController : ControllerBase
 
         if (stream == null)
             return NotFound();
-
-        return File(
-            stream,
-            "application/octet-stream",
-            filename);
+        return Ok(new ApiResponse<FileStreamResult>
+        {
+            TotalRecords = 1,
+            Success = true,
+            StatusCode = 200,
+            Message = "Success",
+            Data = File(stream, "application/octet-stream", filename),
+            Errors = null
+        });
     }
 }

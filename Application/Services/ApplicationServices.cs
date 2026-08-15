@@ -2,8 +2,8 @@
 using Application.Features.CategoryFeatuure.Service;
 using Application.Features.CustomerFeature.InterFaces;
 using Application.Features.CustomerFeature.Service;
-using Application.Features.Email.Interfaces;
 using Application.Features.Email.Service;
+using Application.Features.EmailFeature.Interfaces;
 using Application.Features.LoginFeature.Interfaces;
 using Application.Features.LoginFeature.Service;
 using Application.Features.OrderFeature.InterFace;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Services;
 
-public static class ApplicationServices 
+public static class ApplicationServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {

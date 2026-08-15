@@ -1,13 +1,11 @@
-﻿
-using Application.DataBaseOptions;
-using Application.Features.Email.Interfaces;
+﻿using Application.DataBaseOptions;
+using Application.Features.EmailFeature.Interfaces;
 using Application.Features.LoginFeature.DTOs;
 using Application.Features.LoginFeature.Interfaces;
 using Application.Features.LoginFeature.Service;
 using Application.Responses;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Enums;
 using FluentAssertions;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
@@ -45,21 +43,22 @@ public class LoginServiceTests
     }
     private LoginService GetLoginService(IOptions<DataBaseOptions> Datbaseoptions)
     {
-         return new Application.Features.LoginFeature.Service.LoginService(_mock_passwordhasher.Object, Datbaseoptions, _mock_repo.Object, _mock_uow.Object, _token_serv.Object, _mock_refreshtoken_repo.Object, _email_serv.Object);
+        return new Application.Features.LoginFeature.Service.LoginService(_mock_passwordhasher.Object, Datbaseoptions, _mock_repo.Object, _mock_uow.Object, _token_serv.Object, _mock_refreshtoken_repo.Object, _email_serv.Object);
     }
     [Fact]
     public async Task Login_ShouldReturnLoginreponse_WhenEmailAndPasswordCorrect()
     {
         #region Arrange
-        var logindto = new LoginDto{
+        var logindto = new LoginDto
+        {
             Email = "omarr324324@gmail.com",
             Password = "12345678"
         };
-        
-        var datbaseoptions = Options.Create( new DataBaseOptions
+
+        var datbaseoptions = Options.Create(new DataBaseOptions
         {
             RefreshTokenDays = "1",
-            Secret ="VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
+            Secret = "VerySecretwheniusethetestUnitServiceSoicanKnowitisWorking",
             AccessTokenMinutesForDevelopment = "1",
             AccessTokenMinutes = "0",
             ValidAudience = "UnitTesting",
@@ -67,7 +66,7 @@ public class LoginServiceTests
         });
         var user = new AppUser { User_Email = logindto.Email, User_Password = logindto.Password, Id = 1, Name = "Omar" };
 
-        _mock_repo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<AppUser,bool>>>())).ReturnsAsync(user);
+        _mock_repo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<AppUser, bool>>>())).ReturnsAsync(user);
 
         _mock_mapper.Setup(x => x.Map<AppUser>(logindto)).Returns(user);
         _mock_passwordhasher.Setup(x => x.VerifyHashedPassword(user, user.User_Password, logindto.Password))
@@ -180,8 +179,8 @@ public class LoginServiceTests
             ValidIssuer = "UnitTest"
         });
         _mock_repo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<AppUser, bool>>>())).ReturnsAsync((AppUser?)null);
-        _mock_repo.Setup(x => x.Create(It.IsAny<AppUser>( ))).ReturnsAsync(user);
-        _mock_passwordhasher.Setup(x => x.HashPassword(It.IsAny<AppUser>(),registerdto.Password)).Returns("HashedPassword");
+        _mock_repo.Setup(x => x.Create(It.IsAny<AppUser>())).ReturnsAsync(user);
+        _mock_passwordhasher.Setup(x => x.HashPassword(It.IsAny<AppUser>(), registerdto.Password)).Returns("HashedPassword");
         _email_serv.Setup(x => x.SendWelcomeEmail(registerdto.Email)).Returns(Task.CompletedTask);
         var service = GetLoginService(datbaseoptions);
         #endregion

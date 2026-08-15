@@ -1,9 +1,8 @@
-﻿using Application.Features.Email.Interfaces;
+﻿using Application.Features.EmailFeature.Interfaces;
 using Application.Features.LoginFeature.DTOs;
 using Application.Features.LoginFeature.Interfaces;
 using Application.Responses;
 using Domain.Entities;
-using InfraStructure.Identity;
 using InfraStructure.Persistence.UnitOfWork;
 using InfraStructure.Repositories.Generic;
 using Microsoft.AspNetCore.Identity;
@@ -45,7 +44,6 @@ public class LoginService : ILoginService
         if (ExistUser.Exist)
         {
             return await LoginOperation(ExistUser.user, rigesterDto.Password);
-                //Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
         }
         else
         {
@@ -58,7 +56,6 @@ public class LoginService : ILoginService
             });
             await _uow.SaveChangesAsync();
             var result = await LoginOperation(appuser, rigesterDto.Password);
-                    //Login(new LoginDto { Email = rigesterDto.Email, Password = rigesterDto.Password });
             await _email_serv.SendWelcomeEmail(rigesterDto.Email);
             return result;
         }

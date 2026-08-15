@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-
-namespace Application.Features.LoginFeature.DTOs;
+﻿namespace Application.Features.LoginFeature.DTOs;
 
 public class RigesterDto
 {

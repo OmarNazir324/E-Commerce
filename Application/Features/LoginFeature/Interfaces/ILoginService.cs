@@ -2,7 +2,6 @@
 using Application.Features.LoginFeature.DTOs;
 using Application.Responses;
 using Domain.Entities;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Application.Features.LoginFeature.Interfaces;
 

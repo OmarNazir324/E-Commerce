@@ -4,22 +4,18 @@ using API.Options;
 using Application.DataBaseOptions;
 using Application.Features.ProductFeature.DTOs;
 using Application.Services;
-using AutoMapper;
-using Domain.Entities;
 using InfraStructure.Persistence;
 using InfraStructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Diagnostics;
 using System.Text;
 namespace API
 {
-    public partial  class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -34,13 +30,11 @@ namespace API
                                  .AddJsonFile($"appsettings.{env}.json", true, true);
 
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
             builder.Services.ConfigureOptions<DataBaseOptionsSetup>();
-            //var serviceprovider = builder.Services.BuildServiceProvider().GetService<IOptions<DataBaseOptions>>()!.Value;
+            
 
             builder.Services.AddControllers();
-            
+
             builder.Services.AddDbContext<AppdbContext>(
                 (ServiceProvider, DbContextOptionsBuilder) =>
                 {
@@ -48,21 +42,19 @@ namespace API
                     DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
                     {
                         sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);
-                        // sqloptions.EnableRetryOnFailure(DatabaseOptions.RetryOnFailure);
                     });
                     DbContextOptionsBuilder.EnableDetailedErrors(DatabaseOptions.EnableDetailedErrors);
                     DbContextOptionsBuilder.EnableSensitiveDataLogging(DatabaseOptions.EnableSenstiveDataLogging);
                 });
-            
+
             builder.Services.AddAuthentication(options =>
             {
-
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer();
             builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-                .Configure<IOptions<DataBaseOptions>>((jwt,dboptions) =>
+                .Configure<IOptions<DataBaseOptions>>((jwt, dboptions) =>
                    {
                        var databaseoptions = dboptions.Value!;
                        jwt.SaveToken = true;
@@ -102,7 +94,6 @@ namespace API
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServiceCollection();
             builder.Services.AddAPIService(configuration);
-
             builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -130,21 +121,11 @@ namespace API
                     }
                 });
             });
-
-
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddAuthorization();
-
             var app = builder.Build();
             app.UseGlobalExceptionMiddleware();
-
-            if (app.Environment.IsDevelopment())
-            {
-                // app.MapOpenApi();
-            }
-
             app.UseHttpsRedirection();
-
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();

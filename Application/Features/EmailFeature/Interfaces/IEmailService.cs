@@ -1,5 +1,5 @@
 ﻿
-namespace Application.Features.Email.Interfaces;
+namespace Application.Features.EmailFeature.Interfaces;
 
 public interface IEmailService
 {

@@ -1,7 +1,7 @@
 ﻿
 using Domain.Entities;
 
-namespace InfraStructure.Identity;
+namespace Application.Features.LoginFeature.Service;
 
 public static class CurrentUser
 {
