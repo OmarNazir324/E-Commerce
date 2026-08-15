@@ -23,7 +23,7 @@ namespace API.Controllers
         {
             var result = await _productService.GetProducts();
             if (result == null) return NotFound();
-            return Ok(new ApiResponse<IEnumerable<ProductDTO>>
+            return Ok(new ApiResponse<IEnumerable<ProductDto>>
             {
                 TotalRecords = result.Count(),
                 Success = true,
@@ -38,7 +38,7 @@ namespace API.Controllers
         {
             var result = await _productService.GetProductById(id);
             if (result == null) return NotFound();
-            return Ok(new ApiResponse<ProductDTO>
+            return Ok(new ApiResponse<ProductDto>
             {
                 Message = "Success",
                 Data = result,
@@ -49,7 +49,7 @@ namespace API.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create(CreateProductDTO createProductDTO)
+        public async Task<IActionResult> Create(CreateProductDto createProductDTO)
         {
            var createresult =  await _productService.Create(createProductDTO);
             return Ok(new ApiResponse<Product>
@@ -63,7 +63,7 @@ namespace API.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateProductDTO updateProductDTO)
+        public async Task<IActionResult> Update(UpdateProductDto updateProductDTO)
         {
             await _productService.Update(updateProductDTO);
             return Ok(new ApiResponse<Task>

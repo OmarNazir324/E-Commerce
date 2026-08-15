@@ -20,7 +20,7 @@ namespace API.Controllers
         {
             var result = await _categoryService.GetAll();
             if (result == null) return NotFound("No Categories Was Retrived");
-            return Ok(new ApiResponse<IEnumerable<CategoryDTO>>
+            return Ok(new ApiResponse<IEnumerable<CategoryDto>>
             {
                 TotalRecords = result.Count(),
                 Success = true,
@@ -35,7 +35,7 @@ namespace API.Controllers
         {
             var result= await _categoryService.GetByid(id);
             if (result is null) return NotFound();
-            return Ok(new ApiResponse<CategoryDTO>
+            return Ok(new ApiResponse<CategoryDto>
             {
                 Message = "Success",
                 Data = result,
@@ -46,7 +46,7 @@ namespace API.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create(CreateCategoryDTO createCategoryDTO)
+        public async Task<IActionResult> Create(CreateCategoryDto createCategoryDTO)
         {
            var createresult =  await _categoryService.Create(createCategoryDTO);
             return Ok(new ApiResponse<Task>
@@ -59,7 +59,7 @@ namespace API.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateCategoryDTO updateCategoryDTO)
+        public async Task<IActionResult> Update(UpdateCategoryDto updateCategoryDTO)
         {
             await _categoryService.Update(updateCategoryDTO);
             return Ok(new ApiResponse<Task>

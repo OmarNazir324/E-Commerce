@@ -18,7 +18,7 @@ namespace API.Controllers
         {
             var result = await _orderService.GetAll();
             if (result is null) return (IActionResult)Results.NotFound("There IS No Orders Retrieved");
-            return Ok(new ApiResponse<IEnumerable<OrderDTO>>
+            return Ok(new ApiResponse<IEnumerable<OrderDto>>
             {
                 TotalRecords = result.Count(),
                 Success = true,
@@ -33,7 +33,7 @@ namespace API.Controllers
         {
             var result = await _orderService.GetById(id);
             if (result is null) return NotFound("There is no orders with this ID");
-            return Ok(new ApiResponse<OrderDTO>
+            return Ok(new ApiResponse<OrderDto>
             {
                 Message = "Success",
                 Data = result,
@@ -44,7 +44,7 @@ namespace API.Controllers
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Create(CreateOrderDTO createOrderDTO)
+        public async Task<IActionResult> Create(CreateOrderDto createOrderDTO)
         {
             var createresult = await _orderService.Create(createOrderDTO);
             return Ok(new ApiResponse<Task>
@@ -57,7 +57,7 @@ namespace API.Controllers
             });
         }
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateOrderDTO updateOrderDTO)
+        public async Task<IActionResult> Update(UpdateOrderDto updateOrderDTO)
         {
             await _orderService.Update(updateOrderDTO);
             return Ok(new ApiResponse<Task>

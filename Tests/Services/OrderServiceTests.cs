@@ -33,13 +33,13 @@ public class OrderServiceTests
             CategoryId = 1,
             Stock = 199
         };
-        var createorderdto = new CreateOrderDTO{
+        var createorderdto = new CreateOrderDto{
             Name = "Create Order Test",
             CustomerId = 1,
             Description = "Unit Test For Calculate Total Price",
-            CreateOrder_Items = new List<CreateOrder_itemsDTO>
+            CreateOrder_Items = new List<CreateOrder_itemsDto>
             {
-                new CreateOrder_itemsDTO
+                new CreateOrder_itemsDto
                 {
                     Description = "Unit Test For Order Items",
                     Name = "Create Order Item Test",
@@ -83,14 +83,14 @@ public class OrderServiceTests
             CategoryId = 1,
             Stock = 199
         };
-        var createorderdto = new CreateOrderDTO
+        var createorderdto = new CreateOrderDto
         {
             Name = "Create Order Test",
             CustomerId = 1,
             Description = "Unit Test For Creating New Order",
-            CreateOrder_Items = new List<CreateOrder_itemsDTO>
+            CreateOrder_Items = new List<CreateOrder_itemsDto>
             {
-                new CreateOrder_itemsDTO
+                new CreateOrder_itemsDto
                 {
                     Description = "Unit Test For Order Items",
                     Name = "Create Order Item Test",

@@ -4,8 +4,8 @@ using Domain.Entities;
 
 namespace Application.Features.CustomerFeature.InterFaces;
 
-public interface ICustomerService : ImainServiceCRUD<CreateCustomerDTO, UpdateCustomerDTO, Customer>
+public interface ICustomerService : ImainServiceCRUD<CreateCustomerDto, UpdateCustomerDto, Customer>
 {
-    Task<CustomerDTO> GetById(int id);
-    Task<IEnumerable<CustomerDTO>> GetAll();
+    Task<CustomerDto> GetById(int id);
+    Task<IEnumerable<CustomerDto>> GetAll();
 }

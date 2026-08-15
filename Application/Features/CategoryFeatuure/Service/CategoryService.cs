@@ -8,7 +8,7 @@ using InfraStructure.Repositories.Generic;
 
 namespace Application.Features.CategoryFeatuure.Service;
 
-public class CategoryService : MainServiceCrud<CreateCategoryDTO, UpdateCategoryDTO, Category>, ICategoryService
+public class CategoryService : MainServiceCrud<CreateCategoryDto, UpdateCategoryDto, Category>, ICategoryService
 {
     private readonly IMainInterFace<Category> _repo;
     private readonly IMapper _mapper;
@@ -20,17 +20,17 @@ public class CategoryService : MainServiceCrud<CreateCategoryDTO, UpdateCategory
         this._repo = repo;
         this._uow = uow;
     }
-    public async Task<IEnumerable<CategoryDTO>> GetAll()
+    public async Task<IEnumerable<CategoryDto>> GetAll()
     {
         var categories = await _repo.GetAllAsync(categories => categories.ParentCategory);
-        var result = _mapper.Map<IEnumerable<CategoryDTO>>(categories);
+        var result = _mapper.Map<IEnumerable<CategoryDto>>(categories);
         return result;
     }
-    public async Task<CategoryDTO?> GetByid(int id)
+    public async Task<CategoryDto?> GetByid(int id)
     {
         var category = await _repo.FindAsync(c => c.Id == id, cc => cc.ParentCategory);
         if (category is null) return null;
-        var result = _mapper.Map<CategoryDTO>(category.First());
+        var result = _mapper.Map<CategoryDto>(category.First());
         return result;
     }
 }

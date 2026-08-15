@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.CustomerFeature.Validators;
 
-public class CreateCustomerValidator : AbstractValidator<CreateCustomerDTO>
+public class CreateCustomerValidator : AbstractValidator<CreateCustomerDto>
 {
     public CreateCustomerValidator()
     {

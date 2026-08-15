@@ -2,7 +2,7 @@
 
 namespace Application.Features.OrderFeature.DTOs;
 
-public class Order_itemsDTO:ViewCommonDTO
+public class Order_itemsDto:ViewCommonDto
 {
     public int Quantity { get; set; }
     public decimal TotalPrice { get; set; }

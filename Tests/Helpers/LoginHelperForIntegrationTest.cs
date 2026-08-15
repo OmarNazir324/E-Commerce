@@ -8,7 +8,7 @@ public static class LoginHelperForIntegrationTest
 {
     public static async Task AuthenticateAsync(HttpClient _client, string email, string password)
     {
-        var RigesterDto = new RigesterDto
+        var RigesterDto = new RegisterDto
         {
             Email = email,
             Password = password,

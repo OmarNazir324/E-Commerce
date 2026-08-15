@@ -2,7 +2,7 @@
 using FluentValidation;
 namespace Application.Features.CategoryFeatuure.Validators;
 
-public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryDTO>
+public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryDto>
 {
     public UpdateCategoryValidator() 
     {

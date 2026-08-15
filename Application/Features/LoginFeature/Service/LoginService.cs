@@ -38,7 +38,7 @@ public class LoginService : ILoginService
     }
 
 
-    public async Task<(String Msg, LoginResponse response)> Register(RigesterDto rigesterDto)
+    public async Task<(String Msg, LoginResponse response)> Register(RegisterDto rigesterDto)
     {
         var ExistUser = await CheckUserExist(rigesterDto.Email);
         if (ExistUser.Exist)

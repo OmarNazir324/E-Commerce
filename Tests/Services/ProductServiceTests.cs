@@ -33,14 +33,14 @@ public class ProductServiceTests
             Price = 10.5m,
             Stock = 100
         };
-        var productDto = new ProductDTO
+        var productDto = new ProductDto
         {
             Id = product.Id,
             Price = product.Price,
             Stock = product.Stock
         };
         _mapperMock
-            .Setup(x => x.Map<ProductDTO>(It.IsAny<Product>()))
+            .Setup(x => x.Map<ProductDto>(It.IsAny<Product>()))
             .Returns(productDto);
         _productRepositoryMock.Setup(repo => repo.GetByID(product.Id)).ReturnsAsync(product);
         var service = new ProductService(_mapperMock.Object, _productRepositoryMock.Object, uow: _uow.Object);
@@ -50,7 +50,7 @@ public class ProductServiceTests
     [Fact]
     public async Task GetProductById_ShouldReturnNull_WhenProductDoesnotExist()
     {
-        var productDTO = new ProductDTO
+        var productDTO = new ProductDto
         {
             Id = 1
         };
@@ -65,7 +65,7 @@ public class ProductServiceTests
     public async Task CreateProduct_ShouldCreateIt()
     {
         var product = new Product();
-        var productdto = new CreateProductDTO
+        var productdto = new CreateProductDto
         {
             CategoryId = 1,
             Description = "Unit Testing",
@@ -95,7 +95,7 @@ public class ProductServiceTests
     public async Task DeleteProduct_ShouldDeleteProduct()
     {
         var product = new Product();
-        var Productdto = new ProductDTO
+        var Productdto = new ProductDto
         {
             Id = 1,
             Name = "Omar"

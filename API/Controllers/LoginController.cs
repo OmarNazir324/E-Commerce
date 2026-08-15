@@ -35,7 +35,7 @@ public class LoginController : ControllerBase
         });
     }
     [HttpPost("Register")]
-    public async Task<IActionResult> Register(RigesterDto rigesterDto)
+    public async Task<IActionResult> Register(RegisterDto rigesterDto)
     {
         var result = await _login_serv.Register(rigesterDto);
         if (result.response is null) return NotFound(result.Msg);

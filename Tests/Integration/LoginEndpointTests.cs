@@ -79,7 +79,7 @@ public class LoginEndpointTests : IClassFixture<CustomWebApplicationFactory<Prog
     {
         DatabaseHelper.ResetDB(_factory);
         _factory.Database_Name = DatabaseHelper.GetDBName("Register_");
-        var registerdto = new RigesterDto
+        var registerdto = new RegisterDto
         {
             Email = $"omar_{Guid.NewGuid()}@test123.com",
             Password = "Test123@",

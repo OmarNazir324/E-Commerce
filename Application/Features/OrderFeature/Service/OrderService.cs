@@ -8,7 +8,7 @@ using InfraStructure.Repositories.Generic;
 
 namespace Application.Features.OrderFeature.Service;
 
-public class OrderService : MainServiceCrud<CreateOrderDTO, UpdateOrderDTO, Order>, IOrderService
+public class OrderService : MainServiceCrud<CreateOrderDto, UpdateOrderDto, Order>, IOrderService
 {
     private readonly IMainInterFace<Domain.Entities.Order> _repo;
     private readonly IMapper _mapper;
@@ -20,17 +20,17 @@ public class OrderService : MainServiceCrud<CreateOrderDTO, UpdateOrderDTO, Orde
         _mapper = mapper;
         _uow = uow;
     }
-    public async Task<IEnumerable<OrderDTO>> GetAll()
+    public async Task<IEnumerable<OrderDto>> GetAll()
     {
         var result = await _repo.GetAllAsync(x => x.Customer, x => x.Order_Items);
-        return _mapper.Map<IEnumerable<OrderDTO>>(result);
+        return _mapper.Map<IEnumerable<OrderDto>>(result);
     }
-    public async Task<OrderDTO> GetById(int id)
+    public async Task<OrderDto> GetById(int id)
     {
         var result = await _repo.FindAsync(x => x.Id == id, x => x.Order_Items);
-        return _mapper.Map<OrderDTO>(result.FirstOrDefault());
+        return _mapper.Map<OrderDto>(result.FirstOrDefault());
     }
-    public async override Task<(bool Status, string MSG, Order? entity)> Create(CreateOrderDTO create, params object?[] parameters)
+    public async override Task<(bool Status, string MSG, Order? entity)> Create(CreateOrderDto create, params object?[] parameters)
     {
         try
         {

@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Application.Features.ProductFeature.Service
 {
-    public class ProductService: MainServiceCrud<CreateProductDTO,UpdateProductDTO,Domain.Entities.Product> , IProductService
+    public class ProductService: MainServiceCrud<CreateProductDto,UpdateProductDto,Domain.Entities.Product> , IProductService
     {
         private readonly IMainInterFace<Domain.Entities.Product> _repo;
         private readonly IMapper _mapper;
@@ -23,17 +23,17 @@ namespace Application.Features.ProductFeature.Service
             this._uow = uow;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetProducts()
+        public async Task<IEnumerable<ProductDto>> GetProducts()
         {
             var Products = await _repo.GetALL();
-            var result = _mapper.Map<IEnumerable<ProductDTO>>(Products);
+            var result = _mapper.Map<IEnumerable<ProductDto>>(Products);
             if (result == null) return null;
             return result;
         }
-        public async Task<ProductDTO> GetProductById(int productId)
+        public async Task<ProductDto> GetProductById(int productId)
         {
             var product = await _repo.GetByID(productId);
-            return _mapper.Map<ProductDTO>(product);
+            return _mapper.Map<ProductDto>(product);
         }
     }
 }

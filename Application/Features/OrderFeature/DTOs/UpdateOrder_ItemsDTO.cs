@@ -2,7 +2,7 @@
 
 namespace Application.Features.OrderFeature.DTOs;
 
-public class UpdateOrder_ItemsDTO:CreateCommnDTO
+public class UpdateOrder_ItemsDto:CreateCommnDto
 {
     public int OrderId { get; set; }
     public int ProductId { get; set; }

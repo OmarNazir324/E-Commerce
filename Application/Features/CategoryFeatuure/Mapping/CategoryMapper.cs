@@ -8,9 +8,9 @@ public class CategoryMapper : Profile
 {
     public CategoryMapper()
     {
-        CreateMap<Category, CreateCategoryDTO>().ReverseMap();
-        CreateMap<Category, CategoryDTO>().ForMember(b => b.Main_Category_Name, f => f.MapFrom(mapExpression => mapExpression.ParentCategory.Name)).ReverseMap();
-        CreateMap<Category, UpdateCategoryDTO>().ReverseMap();
+        CreateMap<Category, CreateCategoryDto>().ReverseMap();
+        CreateMap<Category, CategoryDto>().ForMember(b => b.Main_Category_Name, f => f.MapFrom(mapExpression => mapExpression.ParentCategory.Name)).ReverseMap();
+        CreateMap<Category, UpdateCategoryDto>().ReverseMap();
 
     }
 }

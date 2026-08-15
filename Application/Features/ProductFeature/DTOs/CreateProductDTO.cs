@@ -1,18 +1,12 @@
 ﻿using Application.Features.CommonDTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Features.ProductFeature.DTOs
+namespace Application.Features.ProductFeature.DTOs;
+
+public class CreateProductDto : CreateCommnDto
 {
-    public class CreateProductDTO:CreateCommnDTO
-    {
-        public int Stock {  get; set; }
-        public decimal Price { get; set; }
-        public int CategoryId { get; set; }
+    public int Stock { get; set; }
+    public decimal Price { get; set; }
+    public int CategoryId { get; set; }
 
 
-    }
 }

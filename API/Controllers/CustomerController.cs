@@ -23,7 +23,7 @@ public class CustomerController : ControllerBase
     {
         var result = await _customerService.GetAll();
         if (result == null) return NotFound();
-        return Ok(new ApiResponse<IEnumerable<CustomerDTO>>
+        return Ok(new ApiResponse<IEnumerable<CustomerDto>>
         {
             TotalRecords = result.Count(),
             Success = true,
@@ -38,7 +38,7 @@ public class CustomerController : ControllerBase
     {
         var result = await _customerService.GetById(id);
         if (result == null) return NotFound();
-        return Ok(new ApiResponse<CustomerDTO>
+        return Ok(new ApiResponse<CustomerDto>
         {
             Message = "Success",
             Data = result,
@@ -49,7 +49,7 @@ public class CustomerController : ControllerBase
         });
     }
     [HttpPost]
-    public async Task<IActionResult> Create(CreateCustomerDTO createCustomerDTO)
+    public async Task<IActionResult> Create(CreateCustomerDto createCustomerDTO)
     {
        var createresult  = await _customerService.Create(createCustomerDTO);
         return Ok(new ApiResponse<Task>
@@ -63,7 +63,7 @@ public class CustomerController : ControllerBase
         });
     }
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateCustomerDTO dTO)
+    public async Task<IActionResult> Update(UpdateCustomerDto dTO)
     {
         await _customerService.Update(dTO);
         return Ok(new ApiResponse<Task>

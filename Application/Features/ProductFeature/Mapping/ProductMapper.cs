@@ -7,9 +7,9 @@ namespace Application.Features.Product.Mapping
     {
         public ProductMapper()
         {
-            CreateMap<Domain.Entities.Product, ProductDTO>().ReverseMap();
-            CreateMap<Domain.Entities.Product, CreateProductDTO>().ReverseMap();
-            CreateMap<Domain.Entities.Product, UpdateProductDTO>().ReverseMap();
+            CreateMap<Domain.Entities.Product, ProductDto>().ReverseMap();
+            CreateMap<Domain.Entities.Product, CreateProductDto>().ReverseMap();
+            CreateMap<Domain.Entities.Product, UpdateProductDto>().ReverseMap();
         }
     }
 }

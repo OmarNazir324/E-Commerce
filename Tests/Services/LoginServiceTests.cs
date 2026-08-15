@@ -156,7 +156,7 @@ public class LoginServiceTests
     public async Task Register_ShouldHashPasswordAndCreateUserAndSendWelcomeEmail()
     {
         #region Act
-        var registerdto = new RigesterDto
+        var registerdto = new RegisterDto
         {
             Email = "omdarr324324@gmail.com",
             Password = "TestPassw0rd",

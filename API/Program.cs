@@ -90,7 +90,7 @@ namespace API
             });
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddAutoMapper(cfg => { },
-                typeof(CreateProductDTO).Assembly);
+                typeof(CreateProductDto).Assembly);
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServiceCollection();
             builder.Services.AddAPIService(configuration);

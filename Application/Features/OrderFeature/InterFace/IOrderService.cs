@@ -4,8 +4,8 @@ using Domain.Entities;
 
 namespace Application.Features.OrderFeature.InterFace;
 
-public interface IOrderService:ImainServiceCRUD<CreateOrderDTO,UpdateOrderDTO,Order>
+public interface IOrderService:ImainServiceCRUD<CreateOrderDto,UpdateOrderDto,Order>
 {
-    Task<OrderDTO> GetById(int id);
-    Task<IEnumerable<OrderDTO>> GetAll();
+    Task<OrderDto> GetById(int id);
+    Task<IEnumerable<OrderDto>> GetAll();
 }

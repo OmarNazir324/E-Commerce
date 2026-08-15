@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Features.Product.Validators;
 
-public class CreateProductValidator : AbstractValidator<CreateProductDTO>
+public class CreateProductValidator : AbstractValidator<CreateProductDto>
 {
     public CreateProductValidator()
     {

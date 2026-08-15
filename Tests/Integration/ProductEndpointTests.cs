@@ -58,7 +58,7 @@ public class ProductEndpointTests :IClassFixture<IntegrationTestFixture>
         await ProductFactory.CreateProductAsync(_client,name: "Test Product Factory");
         var response = await _client.GetAsync("/api/Product");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responsebody = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+        var responsebody = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDto>>();
         responsebody.Should().ContainSingle();
     }
     
@@ -72,8 +72,8 @@ public class ProductEndpointTests :IClassFixture<IntegrationTestFixture>
         var createresponse = await ProductFactory.CreateProductAsync(_client);
         var createresponseboby = await createresponse.Content.ReadFromJsonAsync<ApiResponse<Product>>();
         var response = await _client.GetAsync("/api/Product/" + createresponseboby.Data.Id);
-        var responsebody = await response.Content.ReadFromJsonAsync<ProductDTO>();
-        responsebody.Should().BeOfType(typeof(ProductDTO));
+        var responsebody = await response.Content.ReadFromJsonAsync<ProductDto>();
+        responsebody.Should().BeOfType(typeof(ProductDto));
         responsebody.Description.Should().Be("IntegrationTest");
     }
     [Fact]
@@ -104,7 +104,7 @@ public class ProductEndpointTests :IClassFixture<IntegrationTestFixture>
         await LoginHelperForIntegrationTest.AuthenticateAsync(_client, $"Login_{Guid.NewGuid()}@gmail.com", "Test123@");
         var createresponse = await ProductFactory.CreateProductAsync(_client,price: 200,cat_id:9,name: "Updated Product");
         var createresposebody = await createresponse.Content.ReadFromJsonAsync<ApiResponse<Product>>();
-        var updatedto = new UpdateProductDTO
+        var updatedto = new UpdateProductDto
         {
             Id = createresposebody.Data.Id,
             CategoryId = createresposebody.Data.CategoryId,
@@ -123,7 +123,7 @@ public class ProductEndpointTests :IClassFixture<IntegrationTestFixture>
 
         var product =
             await getResponse.Content
-                .ReadFromJsonAsync<ProductDTO>();
+                .ReadFromJsonAsync<ProductDto>();
 
         product.Price.Should().Be(200);
         product.Name.Should().Be("Updated Product");
@@ -141,7 +141,7 @@ public class ProductEndpointTests :IClassFixture<IntegrationTestFixture>
         response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var productresponse = await _client.GetAsync("/api/Product/" + createresposebody.Data.Id);
-        var product = await productresponse.Content.ReadFromJsonAsync<ProductDTO>();
+        var product = await productresponse.Content.ReadFromJsonAsync<ProductDto>();
         productresponse.StatusCode
         .Should()
         .Be(HttpStatusCode.NotFound);

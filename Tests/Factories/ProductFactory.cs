@@ -7,7 +7,7 @@ public static class ProductFactory
 {
     public static async Task<HttpResponseMessage> CreateProductAsync(HttpClient _client,int? cat_id =null, String? desc = null,String? name = null,int? price = null,int? stock = null)
     {
-        var productdto = new CreateProductDTO
+        var productdto = new CreateProductDto
         {
             CategoryId = cat_id ?? 1,
             Description = desc ?? "IntegrationTest",

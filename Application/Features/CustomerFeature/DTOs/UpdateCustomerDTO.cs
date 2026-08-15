@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.CustomerFeature.DTOs;
 
-public class UpdateCustomerDTO : ViewCommonDTO
+public class UpdateCustomerDto : ViewCommonDto
 {
     [EmailAddress]
     public String email { get; set; }

@@ -8,7 +8,7 @@ using InfraStructure.Repositories.Generic;
 
 namespace Application.Features.CustomerFeature.Service;
 
-public class CustomerService : MainServiceCrud<CreateCustomerDTO, UpdateCustomerDTO, Customer>, ICustomerService
+public class CustomerService : MainServiceCrud<CreateCustomerDto, UpdateCustomerDto, Customer>, ICustomerService
 {
     private readonly IMainInterFace<Customer> _repo;
     private readonly IMapper _mapper;
@@ -20,15 +20,15 @@ public class CustomerService : MainServiceCrud<CreateCustomerDTO, UpdateCustomer
         _mapper = mapper;
         _uow = uow;
     }
-    public async Task<IEnumerable<CustomerDTO>> GetAll()
+    public async Task<IEnumerable<CustomerDto>> GetAll()
     {
         var result = await _repo.GetAllAsync(c => c.Orders);
-        return _mapper.Map<IEnumerable<CustomerDTO>>(result);
+        return _mapper.Map<IEnumerable<CustomerDto>>(result);
     }
-    public async Task<CustomerDTO> GetById(int id)
+    public async Task<CustomerDto> GetById(int id)
     {
         var result = await _repo.GetByID(id);
-        return _mapper.Map<CustomerDTO>(result);
+        return _mapper.Map<CustomerDto>(result);
     }
 
 }
