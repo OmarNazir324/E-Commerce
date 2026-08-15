@@ -159,7 +159,7 @@ public class LoginServiceTests
         #region Act
         var registerdto = new RigesterDto
         {
-            Email = "omarr324324@gmail.com",
+            Email = "omdarr324324@gmail.com",
             Password = "TestPassw0rd",
             UserName = "Omar Nazir"
         };
@@ -180,6 +180,7 @@ public class LoginServiceTests
             ValidIssuer = "UnitTest"
         });
         _mock_repo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<Expression<Func<AppUser, bool>>>())).ReturnsAsync((AppUser?)null);
+        _mock_repo.Setup(x => x.Create(It.IsAny<AppUser>( ))).ReturnsAsync(user);
         _mock_passwordhasher.Setup(x => x.HashPassword(It.IsAny<AppUser>(),registerdto.Password)).Returns("HashedPassword");
         _email_serv.Setup(x => x.SendWelcomeEmail(registerdto.Email)).Returns(Task.CompletedTask);
         var service = GetLoginService(datbaseoptions);

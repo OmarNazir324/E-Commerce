@@ -24,9 +24,10 @@ public class Order_itemsRepository:MainRepository<Order_items>,IOrder_itemsRepos
             await _Context.SaveChangesAsync();
         }
     }
-    public override async Task Create(Order_items t)
+    public override async Task<Order_items> Create(Order_items t)
     {
-        await base.Create(t);
+        var orderitem = await base.Create(t);
+
 
         var order = await _Context.Orders
             .Include(o => o.Order_Items)
@@ -38,6 +39,7 @@ public class Order_itemsRepository:MainRepository<Order_items>,IOrder_itemsRepos
             order.clac_TotalPrice();
             await _Context.SaveChangesAsync();
         }
+        return orderitem;
     }
-
+    
 }

@@ -2,12 +2,14 @@
 
 namespace API.Extensions
 {
-    public static class ExceptionMiddlewareExtensions
+    public static class MiddlewareExtensions
     {
         public static IApplicationBuilder UseGlobalExceptionMiddleware(
             this IApplicationBuilder app)
         {
-            return app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<CheckPerformanceMiddleware>();
+            return app;
         }
     }
 }

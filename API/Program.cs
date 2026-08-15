@@ -45,7 +45,6 @@ namespace API
                 (ServiceProvider, DbContextOptionsBuilder) =>
                 {
                     var DatabaseOptions = ServiceProvider.GetService<IOptions<DataBaseOptions>>()!.Value;
-                    Debug.WriteLine(">>>>>>>> USING SQL SERVER <<<<<<<<");
                     DbContextOptionsBuilder.UseSqlServer(DatabaseOptions.ConnectionString, sqloptions =>
                     {
                         sqloptions.CommandTimeout(DatabaseOptions.CommandTimeOut);

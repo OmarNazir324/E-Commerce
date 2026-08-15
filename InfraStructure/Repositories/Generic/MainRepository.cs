@@ -138,10 +138,12 @@ namespace InfraStructure.Repositories.Generic
         }
         #region CRUD
 
-        public virtual async Task Create(T entity)
+        public virtual async Task<T?> Create(T entity)
         {
             _dbSet.Add(entity);
+            return entity;
         }
+
         public virtual async Task Update(T t)
         {
             _dbSet.Update(t);
