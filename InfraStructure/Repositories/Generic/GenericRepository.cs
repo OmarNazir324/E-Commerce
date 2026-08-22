@@ -7,14 +7,14 @@ using System.Linq.Expressions;
 
 namespace InfraStructure.Repositories.Generic
 {
-    public class MainRepository<T> : IMainInterFace<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
 
         private readonly AppdbContext _context;
         private readonly Microsoft.EntityFrameworkCore.DbSet<T> _dbSet;
 
 
-        public MainRepository(AppdbContext context)
+        public GenericRepository(AppdbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
@@ -22,7 +22,7 @@ namespace InfraStructure.Repositories.Generic
         }
         public AppdbContext GetCurrentContext => _context;
         public DbConnection GetConnection => _context.Database.GetDbConnection();
-        public async Task<IEnumerable<T>> GetALL()
+        public async Task<IEnumerable<T>> GetALLAsync()
         {
             return await _dbSet.AsNoTracking().ToListAsync();
         }
@@ -82,7 +82,7 @@ namespace InfraStructure.Repositories.Generic
 
             return (data, totalCount);
         }
-        public async Task<IQueryable> GetQueryable()
+        public  IQueryable GetQueryable()
         {
             return _dbSet.AsNoTracking().AsQueryable();
         }
@@ -102,7 +102,7 @@ namespace InfraStructure.Repositories.Generic
                 .Where(predicate)
                 .ToListAsync();
         }
-        public virtual async Task<T?> GetByID(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -138,13 +138,13 @@ namespace InfraStructure.Repositories.Generic
         }
         #region CRUD
 
-        public virtual async Task<T?> Create(T entity)
+        public virtual async Task<T?> AddAsync(T entity)
         {
             _dbSet.Add(entity);
             return entity;
         }
 
-        public virtual async Task Update(T t)
+        public virtual async Task UpdateAsync(T t)
         {
             _dbSet.Update(t);
         }

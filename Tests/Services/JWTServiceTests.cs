@@ -17,18 +17,18 @@ namespace Tests.Services;
 
 public class JWTServiceTests
 {
-    private readonly Mock<IMainInterFace<RefreshToken>> _token_repo;
+    private readonly Mock<IGenericRepository<RefreshToken>> _token_repo;
     private readonly Mock<ITokenService> _token_serv;
     private readonly Mock<IPasswordHasher<AppUser>> _password_hasher;
-    private readonly Mock<IMainInterFace<AppUser>> _appuser_repo;
+    private readonly Mock<IGenericRepository<AppUser>> _appuser_repo;
     private readonly Mock<IUnitOfWork> _uow;
     private readonly Mock<IEmailService> _email_serv;
     public JWTServiceTests()
     {
-        _token_repo = new Mock<IMainInterFace<RefreshToken>>();
+        _token_repo = new Mock<IGenericRepository<RefreshToken>>();
         _token_serv = new Mock<ITokenService>();
         _password_hasher = new Mock<IPasswordHasher<AppUser>>();
-        _appuser_repo = new Mock<IMainInterFace<AppUser>>();
+        _appuser_repo = new Mock<IGenericRepository<AppUser>>();
         _uow = new Mock<IUnitOfWork>();
         _email_serv = new Mock<IEmailService>();       
     }

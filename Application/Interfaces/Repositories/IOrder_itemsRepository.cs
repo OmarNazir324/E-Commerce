@@ -3,6 +3,6 @@ using InfraStructure.Repositories.Generic;
 
 namespace InfraStructure.Repositories.Specific.Interfaces;
 
-public interface IOrder_itemsRepository : IMainInterFace<Order_items>
+public interface IOrder_itemsRepository : IGenericRepository<Order_items>
 {
 }

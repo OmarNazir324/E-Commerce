@@ -7,10 +7,10 @@ namespace Application.CrudServiceGeneric;
 public class MainServiceCrud<CreateDTO, UpdateDTO, MainEntity> : ImainServiceCRUD<CreateDTO, UpdateDTO, MainEntity>
    where CreateDTO : class where UpdateDTO : class where MainEntity : class
 {
-    private readonly IMainInterFace<MainEntity> _repo;
+    private readonly IGenericRepository<MainEntity> _repo;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitofwork;
-    public MainServiceCrud(IMainInterFace<MainEntity> repo, IMapper mapper, IUnitOfWork unitOfWork)
+    public MainServiceCrud(IGenericRepository<MainEntity> repo, IMapper mapper, IUnitOfWork unitOfWork)
     {
         _repo = repo;
         _mapper = mapper;

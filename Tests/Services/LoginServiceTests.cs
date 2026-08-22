@@ -20,8 +20,8 @@ namespace Tests.Services;
 
 public class LoginServiceTests
 {
-    private readonly Mock<IMainInterFace<AppUser>> _mock_repo;
-    private readonly Mock<IMainInterFace<RefreshToken>> _mock_refreshtoken_repo;
+    private readonly Mock<IGenericRepository<AppUser>> _mock_repo;
+    private readonly Mock<IGenericRepository<RefreshToken>> _mock_refreshtoken_repo;
     private readonly Mock<IUnitOfWork> _mock_uow;
     private readonly Mock<IMapper> _mock_mapper;
     private readonly Mock<IPasswordHasher<AppUser>> _mock_passwordhasher;
@@ -32,8 +32,8 @@ public class LoginServiceTests
     public LoginServiceTests()
     {
         _mock_mapper = new Mock<IMapper>();
-        _mock_refreshtoken_repo = new Mock<IMainInterFace<RefreshToken>>();
-        _mock_repo = new Mock<IMainInterFace<AppUser>>();
+        _mock_refreshtoken_repo = new Mock<IGenericRepository<RefreshToken>>();
+        _mock_repo = new Mock<IGenericRepository<AppUser>>();
         _mock_uow = new Mock<IUnitOfWork>();
         _mock_passwordhasher = new Mock<IPasswordHasher<AppUser>>();
         _mock_service = new Mock<ILoginService>();

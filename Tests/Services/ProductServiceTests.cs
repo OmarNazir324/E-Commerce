@@ -13,14 +13,14 @@ namespace Tests.Services;
 
 public class ProductServiceTests
 {
-    private readonly Mock<IMainInterFace<Product>> _productRepositoryMock;
+    private readonly Mock<IGenericRepository<Product>> _productRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<IUnitOfWork> _uow;
 
     public ProductServiceTests()
     {
         _mapperMock = new Mock<IMapper>();
-        _productRepositoryMock = new Mock<IMainInterFace<Product>>();
+        _productRepositoryMock = new Mock<IGenericRepository<Product>>();
         _uow = new Mock<IUnitOfWork>();
 
     }

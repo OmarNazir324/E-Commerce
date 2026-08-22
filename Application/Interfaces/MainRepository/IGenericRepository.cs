@@ -4,13 +4,13 @@ using System.Linq.Expressions;
 
 namespace InfraStructure.Repositories.Generic;
 
-public interface IMainInterFace<T>
+public interface IGenericRepository<T>
 {
-     Task<IEnumerable<T>> GetALL();
+     Task<IEnumerable<T>> GetALLAsync();
 
     Task<IEnumerable<T>> GetSelectedFields<T>(String sql, IDbTransaction? transaction = null) where T : class;
     Task<IEnumerable<dynamic>> GetSelectedFields(string sql, IDbTransaction? transaction = null);
-    Task<IQueryable> GetQueryable();
+    IQueryable GetQueryable();
     DbConnection GetConnection { get; }
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
     Task<(IEnumerable<T> Data, int TotalCount)> GetPagedAsync(
@@ -20,9 +20,9 @@ public interface IMainInterFace<T>
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         params Expression<Func<T, object>>[] includes);
     Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
-    public Task<T?> GetByID(int id);
-    public Task<T?> Create(T entity);
-    public Task Update(T t);
+    public Task<T?> GetByIdAsync(int id);
+    public Task<T?> AddAsync(T entity);
+    public Task UpdateAsync(T t);
     public Task Delete(T t);
     Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 

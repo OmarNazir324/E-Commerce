@@ -11,9 +11,9 @@ namespace Application.Features.LoginFeature.Service;
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IMainInterFace<AppUser> _appuser_repo;
+    private readonly IGenericRepository<AppUser> _appuser_repo;
     private readonly IHashBase _hashbase;
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor, IMainInterFace<AppUser> appuser_repo, IHashBase hashbase)
+    public CurrentUserService(IHttpContextAccessor httpContextAccessor, IGenericRepository<AppUser> appuser_repo, IHashBase hashbase)
     {
         _httpContextAccessor = httpContextAccessor;
         _appuser_repo = appuser_repo;

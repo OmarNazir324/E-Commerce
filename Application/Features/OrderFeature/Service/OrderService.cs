@@ -10,10 +10,10 @@ namespace Application.Features.OrderFeature.Service;
 
 public class OrderService : MainServiceCrud<CreateOrderDto, UpdateOrderDto, Order>, IOrderService
 {
-    private readonly IMainInterFace<Domain.Entities.Order> _repo;
+    private readonly IGenericRepository<Domain.Entities.Order> _repo;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uow;
-    public OrderService(IMainInterFace<Domain.Entities.Order> repo, IMapper mapper, IUnitOfWork uow)
+    public OrderService(IGenericRepository<Domain.Entities.Order> repo, IMapper mapper, IUnitOfWork uow)
         : base(repo, mapper, uow)
     {
         _repo = repo;

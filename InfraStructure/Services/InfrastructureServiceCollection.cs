@@ -12,7 +12,7 @@ namespace InfraStructure.Services
     {
         public static IServiceCollection AddInfrastructureServiceCollection(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IMainInterFace<>), typeof(MainRepository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IOrder_itemsRepository, Order_itemsRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IHashBase, HashBase>();

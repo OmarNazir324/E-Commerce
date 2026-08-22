@@ -10,10 +10,10 @@ namespace Application.Features.CustomerFeature.Service;
 
 public class CustomerService : MainServiceCrud<CreateCustomerDto, UpdateCustomerDto, Customer>, ICustomerService
 {
-    private readonly IMainInterFace<Customer> _repo;
+    private readonly IGenericRepository<Customer> _repo;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uow;
-    public CustomerService(IMainInterFace<Customer> repo, IMapper mapper, IUnitOfWork uow)
+    public CustomerService(IGenericRepository<Customer> repo, IMapper mapper, IUnitOfWork uow)
         : base(repo, mapper, uow)
     {
         _repo = repo;

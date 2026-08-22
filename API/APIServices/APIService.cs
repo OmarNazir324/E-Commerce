@@ -1,5 +1,8 @@
-﻿using API.Options;
+﻿using API.Extensions;
+using API.Options;
 using Application.DataBaseOptions;
+using Domain.Entities;
+using InfraStructure.Repositories.Generic;
 
 namespace API.APIServices
 {
@@ -16,7 +19,7 @@ namespace API.APIServices
                                  .Get<DataBaseOptions>()!
                                  .CashingUrl;
             });
-
+            services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
             return services;
         }
     }

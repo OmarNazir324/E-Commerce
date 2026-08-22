@@ -13,12 +13,12 @@ namespace Tests.Services;
 public class OrderServiceTests
 {
     private readonly Mock<IMapper> _mapper;
-    private readonly Mock<IMainInterFace<Order>> _repo;
+    private readonly Mock<IGenericRepository<Order>> _repo;
     private readonly Mock<IUnitOfWork> _uow;
     public OrderServiceTests()
     {
         _mapper = new Mock<IMapper>();
-        _repo = new Mock<IMainInterFace<Order>>();
+        _repo = new Mock<IGenericRepository<Order>>();
         _uow = new Mock<IUnitOfWork>();
     }
     [Fact]

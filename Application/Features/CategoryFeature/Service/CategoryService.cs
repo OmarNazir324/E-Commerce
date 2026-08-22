@@ -10,10 +10,10 @@ namespace Application.Features.CategoryFeatuure.Service;
 
 public class CategoryService : MainServiceCrud<CreateCategoryDto, UpdateCategoryDto, Category>, ICategoryService
 {
-    private readonly IMainInterFace<Category> _repo;
+    private readonly IGenericRepository<Category> _repo;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _uow;
-    public CategoryService(IMainInterFace<Category> repo, IMapper mapper, IUnitOfWork uow)
+    public CategoryService(IGenericRepository<Category> repo, IMapper mapper, IUnitOfWork uow)
         : base(repo, mapper, uow)
     {
         this._mapper = mapper;

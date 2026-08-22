@@ -2,9 +2,13 @@ using API.APIServices;
 using API.Extensions;
 using API.Options;
 using Application.DataBaseOptions;
+using Application.Features.Product.Interfaces;
 using Application.Features.ProductFeature.DTOs;
+using Application.Features.ProductFeature.Service;
 using Application.Services;
+using Domain.Entities;
 using InfraStructure.Persistence;
+using InfraStructure.Repositories.Generic;
 using InfraStructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -123,6 +127,9 @@ namespace API
             });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddAuthorization();
+            builder.Services.AddPerformanceProxy<IProductService, ProductService>();
+            builder.Services.AddPerformanceProxy<IGenericRepository<Product>, GenericRepository<Product>>();
+
             var app = builder.Build();
             app.UseGlobalExceptionMiddleware();
             app.UseHttpsRedirection();
